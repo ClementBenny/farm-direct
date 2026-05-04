@@ -61,10 +61,9 @@
     .cancelled-notice h4 { font-size: 16px; font-weight: 500; color: #8c2828; margin-bottom: 3px; }
     .cancelled-notice p  { font-size: 14px; color: rgba(140,40,40,0.65); }
 
-    /* 60px dots for show page */
     .step-dot { width: 60px; height: 60px; }
     .step-dot i { font-size: 26px; line-height: 1; }
-    .step-dot--done i  { font-size: 28px; }
+    .step-dot--done i { font-size: 28px; }
     .step-dot--current { box-shadow: 0 0 0 8px rgba(75,54,33,0.12), 0 4px 16px rgba(75,54,33,0.25); }
     .progress-step { gap: 14px; }
     .step-label { font-size: 12px; }
@@ -159,4 +158,29 @@
             <tfoot>
                 <tr>
                     <td colspan="3">Order Total</td>
-                    <td>₹{{ number_format($order->total, 2) }}</t
+                    <td>₹{{ number_format($order->total, 2) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    {{-- Delivery --}}
+    <div class="fd-card">
+        <p class="fd-card-label">Delivery Details</p>
+        <div class="delivery-grid">
+            <div class="delivery-field">
+                <label>Delivery Address</label>
+                <p>{{ $order->delivery_address }}</p>
+            </div>
+            @if($order->notes)
+            <div class="delivery-field">
+                <label>Order Notes</label>
+                <p>{{ $order->notes }}</p>
+            </div>
+            @endif
+        </div>
+    </div>
+
+</div>
+
+@endsection
