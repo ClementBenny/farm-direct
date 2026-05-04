@@ -1,72 +1,117 @@
 @extends('layouts.public')
 
-@section('page-title', 'Cart')
+@section('title', 'Your Cart — Farm Direct')
 
 @section('content')
 
-<h1 class="text-2xl font-bold text-gray-800 mb-6">Your Cart</h1>
+<style>
+    .qty-input {
+        width: 64px; text-align: center;
+        border: 1.5px solid rgba(75,54,33,0.22);
+        border-radius: 999px; padding: 6px 10px;
+        font-size: 14px; color: var(--umber);
+        background: var(--ivory); font-family: 'Jost', sans-serif;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        -moz-appearance: textfield;
+    }
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .qty-input:focus {
+        outline: none; border-color: var(--umber);
+        box-shadow: 0 0 0 3px rgba(75,54,33,0.1);
+    }
+    .remove-btn {
+        display: inline-flex; align-items: center; gap: 5px;
+        font-size: 12px; letter-spacing: 0.06em; color: rgba(140,40,40,0.6);
+        background: none; border: none; cursor: pointer;
+        font-family: 'Jost', sans-serif; font-weight: 400;
+        padding: 0; transition: color 0.2s;
+    }
+    .remove-btn:hover { color: #8c2828; }
+    .remove-btn i { font-size: 14px; }
+    .cart-actions {
+        display: flex; align-items: center;
+        justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    @media (max-width: 640px) {
+        .cart-actions { flex-direction: column; align-items: stretch; text-align: center; }
+    }
+</style>
 
-@if(empty($cart))
-    <div class="text-center py-16">
-        <p class="text-gray-400 mb-4">Your cart is empty.</p>
-        <a href="{{ route('shop.index') }}" class="text-green-600 hover:text-green-800 font-medium">← Back to shop</a>
-    </div>
-@else
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-4">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="text-left px-6 py-3 font-medium text-gray-500">Product</th>
-                    <th class="text-right px-6 py-3 font-medium text-gray-500">Price</th>
-                    <th class="text-center px-6 py-3 font-medium text-gray-500">Qty</th>
-                    <th class="text-right px-6 py-3 font-medium text-gray-500">Subtotal</th>
-                    <th class="px-6 py-3"></th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @foreach($products as $product)
-                <tr>
-                    <td class="px-6 py-4 font-medium text-gray-800">{{ $product->name }}</td>
-                    <td class="px-6 py-4 text-right text-gray-600">₹{{ number_format($product->price, 2) }}</td>
-                    <td class="px-6 py-4">
-                        <form action="{{ route('shop.cart.update') }}" method="POST" class="flex justify-center">
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <input type="number" name="quantity" value="{{ $cart[$product->id] }}"
-                                   min="1" max="99" onchange="this.form.submit()"
-                                   class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </form>
-                    </td>
-                    <td class="px-6 py-4 text-right font-medium text-gray-800">
-                        ₹{{ number_format($product->price * $cart[$product->id], 2) }}
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <form action="{{ route('shop.cart.remove') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <button type="submit" class="text-red-400 hover:text-red-600 text-xs">Remove</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-            <tfoot class="border-t-2 border-gray-200">
-                <tr>
-                    <td colspan="3" class="px-6 py-4 text-right font-semibold text-gray-700">Total</td>
-                    <td class="px-6 py-4 text-right font-bold text-gray-900 text-base">₹{{ number_format($total, 2) }}</td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+<div class="page-wrap">
 
-    <div class="flex justify-between items-center">
-        <a href="{{ route('shop.index') }}" class="text-green-600 hover:text-green-800 text-sm">← Continue shopping</a>
-        <a href="{{ route('shop.checkout') }}"
-           class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors">
-            Proceed to Checkout →
-        </a>
-    </div>
-@endif
+    <p class="section-label">Account</p>
+    <h1 class="page-heading">Your Cart</h1>
+
+    @if(empty($cart))
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="ph-light ph-shopping-cart"></i></div>
+            <h3>Your cart is empty</h3>
+            <p>Add some fresh produce to get started.</p>
+            <a href="{{ route('shop.index') }}" class="btn-primary">Browse the shop</a>
+        </div>
+    @else
+        <p class="page-sub">{{ count($cart) }} {{ Str::plural('item', count($cart)) }} in your cart</p>
+
+        <div class="fd-card fd-card--flush">
+            <table class="fd-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($products as $product)
+                    <tr>
+                        <td>{{ $product->name }}</td>
+                        <td class="muted">₹{{ number_format($product->price, 2) }}</td>
+                        <td>
+                            <form action="{{ route('shop.cart.update') }}" method="POST" style="display:flex;justify-content:flex-end;">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="number" name="quantity"
+                                       value="{{ $cart[$product->id] }}"
+                                       min="1" max="{{ $product->stock }}"
+                                       onchange="this.form.submit()"
+                                       class="qty-input">
+                            </form>
+                        </td>
+                        <td>₹{{ number_format($product->price * $cart[$product->id], 2) }}</td>
+                        <td style="text-align:center;">
+                            <form action="{{ route('shop.cart.remove') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <button type="submit" class="remove-btn">
+                                    <i class="ph ph-trash"></i> Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Order Total</td>
+                        <td colspan="2">₹{{ number_format($total, 2) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="cart-actions">
+            <a href="{{ route('shop.index') }}" class="back-link">
+                <i class="ph ph-arrow-left"></i> Continue shopping
+            </a>
+            <a href="{{ route('shop.checkout') }}" class="btn-primary">
+                Proceed to checkout &nbsp;<i class="ph ph-arrow-right"></i>
+            </a>
+        </div>
+    @endif
+
+</div>
 
 @endsection

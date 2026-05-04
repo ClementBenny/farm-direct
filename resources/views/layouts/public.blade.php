@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Farm Direct')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -70,7 +71,7 @@
             padding: 3px 10px; border-radius: 999px;
             font-weight: 500; white-space: nowrap;
         }
-        .nav-role-pill--wholesale { background: rgba(196,164,132,0.2);    color: var(--umber); border: 1px solid rgba(75,54,33,0.2); }
+        .nav-role-pill--wholesale { background: rgba(196,164,132,0.2); color: var(--umber); border: 1px solid rgba(75,54,33,0.2); }
         .nav-role-pill--customer  { background: rgba(196,164,132,0.2); color: var(--umber); border: 1px solid rgba(196,164,132,0.4); }
         .nav-divider { width: 1px; height: 18px; background: rgba(196,164,132,0.35); }
         .nav-btn {
@@ -115,6 +116,7 @@
             .nav-mobile .nav-btn { text-align: center; }
         }
 
+        /* ── GLOBAL BUTTONS ── */
         .btn-primary {
             display: inline-block; background: var(--umber); color: var(--ivory);
             font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 400;
@@ -132,6 +134,8 @@
             transition: color 0.2s, border-color 0.2s;
         }
         .btn-ghost:hover { color: var(--umber); border-color: var(--umber); }
+
+        /* ── GLOBAL TYPOGRAPHY ── */
         .section-label {
             font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
             text-transform: uppercase; color: var(--olive); margin-bottom: 12px;
@@ -140,6 +144,185 @@
             font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600;
             color: var(--umber); line-height: 1.15; margin-bottom: 20px;
         }
+
+        /* ── SHARED PAGE STYLES ── */
+        .page-wrap {
+            min-height: 100vh;
+            padding: 120px 48px 80px;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--ivory);
+        }
+        .page-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 56px; font-weight: 600;
+            color: var(--umber); line-height: 1.1;
+            margin-bottom: 6px;
+        }
+        .page-sub {
+            font-size: 16px; color: var(--umber);
+            opacity: 0.6; margin-bottom: 48px; letter-spacing: 0.02em;
+        }
+
+        /* fd-card */
+        .fd-card {
+            background: var(--champagne);
+            border: 1.5px solid rgba(75,54,33,0.18);
+            border-radius: 20px;
+            padding: 40px 44px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.25s, transform 0.25s;
+        }
+        .fd-card:hover {
+            box-shadow: 0 12px 40px rgba(75,54,33,0.12);
+            transform: translateY(-2px);
+        }
+        .fd-card--flush { padding: 0; overflow: hidden; }
+
+        .fd-card-label {
+            font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--olive);
+            margin-bottom: 28px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .fd-card-label::after {
+            content: ''; flex: 1; height: 1px; background: rgba(75,54,33,0.15);
+        }
+
+        .fd-divider { height: 1px; background: rgba(75,54,33,0.15); margin-bottom: 28px; }
+
+        /* fd-link */
+        .fd-link {
+            font-size: 14px; font-weight: 500; letter-spacing: 0.06em;
+            color: var(--umber); text-decoration: none;
+            border-bottom: 1.5px solid var(--umber); padding-bottom: 1px;
+            transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+        }
+        .fd-link:hover { color: var(--olive); border-color: var(--olive); }
+
+        /* back-link */
+        .back-link {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 14px; letter-spacing: 0.05em;
+            color: var(--mauve); text-decoration: none;
+            margin-bottom: 32px; transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--umber); }
+
+        /* status badges */
+        .status-badge {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 6px 16px;
+            border-radius: 999px; white-space: nowrap;
+        }
+        .status-pending   { background: rgba(75,54,33,0.12);  color: var(--umber); border: 1.5px solid rgba(75,54,33,0.3); }
+        .status-confirmed { background: rgba(128,128,0,0.15); color: #4a5a00;      border: 1.5px solid rgba(128,128,0,0.4); }
+        .status-picking   { background: rgba(75,54,33,0.18);  color: var(--umber); border: 1.5px solid rgba(75,54,33,0.4); }
+        .status-packed    { background: rgba(128,128,0,0.2);  color: #3d4d00;      border: 1.5px solid rgba(128,128,0,0.5); }
+        .status-delivered { background: var(--olive);         color: #fff;         border: 1.5px solid var(--olive); }
+        .status-cancelled { background: rgba(140,40,40,0.12); color: #8c2828;      border: 1.5px solid rgba(140,40,40,0.3); }
+
+        /* cancelled notice */
+        .cancelled-notice {
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px;
+            background: rgba(140,40,40,0.08);
+            border: 1.5px solid rgba(140,40,40,0.22);
+            border-radius: 12px;
+            font-size: 15px; color: #8c2828;
+        }
+        .cancelled-notice i { font-size: 20px; flex-shrink: 0; }
+
+        /* fd-table */
+        .fd-table { width: 100%; border-collapse: collapse; }
+        .fd-table thead tr { border-bottom: 1.5px solid rgba(75,54,33,0.2); }
+        .fd-table th {
+            font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+            text-transform: uppercase; color: var(--olive);
+            padding: 20px 28px 16px; text-align: right;
+        }
+        .fd-table th:first-child { text-align: left; }
+        .fd-table tbody tr { border-bottom: 1px solid rgba(75,54,33,0.1); }
+        .fd-table tbody tr:last-child { border-bottom: none; }
+        .fd-table tbody tr:hover { background: rgba(75,54,33,0.03); }
+        .fd-table td {
+            padding: 18px 28px; font-size: 15px;
+            color: var(--umber); text-align: right; vertical-align: middle;
+        }
+        .fd-table td:first-child { text-align: left; font-weight: 500; }
+        .fd-table td.muted { opacity: 0.55; }
+        .fd-table tfoot tr { border-top: 2px solid rgba(75,54,33,0.22); }
+        .fd-table tfoot td {
+            padding: 20px 28px 24px; font-size: 17px;
+            color: var(--umber); text-align: right; font-weight: 700;
+        }
+        .fd-table tfoot td:first-child {
+            text-align: left; font-size: 11px; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--olive); font-weight: 500;
+        }
+
+        /* progress tracker */
+        .progress-wrap {
+            position: relative; display: flex;
+            align-items: flex-start; justify-content: space-between;
+        }
+        .progress-track {
+            position: absolute; height: 2px;
+            background: rgba(75,54,33,0.18); z-index: 0;
+        }
+        .progress-fill {
+            position: absolute; top: 0; left: 0;
+            height: 100%; background: var(--olive); transition: width 0.5s ease;
+        }
+        .progress-step {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center; width: 20%;
+        }
+        .step-dot {
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0;
+            transition: all 0.3s; position: relative; z-index: 2;
+        }
+        .step-dot--done    { background: var(--olive); box-shadow: 0 4px 12px rgba(128,128,0,0.3); }
+        .step-dot--done i  { color: #fff; }
+        .step-dot--current { background: var(--umber); }
+        .step-dot--current i { color: var(--champagne); }
+        .step-dot--future  { background: var(--ivory); border: 2px solid rgba(75,54,33,0.2); }
+        .step-dot--future i { color: rgba(75,54,33,0.3); }
+        .step-dot--done .ph-fill.ph-check-circle            { display: block; }
+        .step-dot--done .step-ph                             { display: none;  }
+        .step-dot:not(.step-dot--done) .ph-fill.ph-check-circle { display: none;  }
+        .step-dot:not(.step-dot--done) .step-ph              { display: block; }
+        .step-label { letter-spacing: 0.04em; line-height: 1.35; font-weight: 400; }
+        .step-label--done    { color: var(--olive); font-weight: 500; }
+        .step-label--current { color: var(--umber); font-weight: 700; }
+        .step-label--future  { color: rgba(75,54,33,0.38); }
+
+        /* empty state */
+        .empty-state { text-align: center; padding: 100px 24px; }
+        .empty-state-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: rgba(75,54,33,0.07); border: 1.5px solid rgba(75,54,33,0.15);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 28px;
+        }
+        .empty-state-icon i { font-size: 34px; color: rgba(75,54,33,0.3); }
+        .empty-state h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 34px; font-weight: 600; color: var(--umber); margin-bottom: 10px;
+        }
+        .empty-state p { font-size: 16px; color: var(--umber); opacity: 0.55; margin-bottom: 32px; }
+
+        /* delivery grid */
+        .delivery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .delivery-field label {
+            display: block; font-size: 11px; font-weight: 500;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--olive); margin-bottom: 9px;
+        }
+        .delivery-field p { font-size: 15px; color: var(--umber); line-height: 1.7; }
+
+        /* ── LANDING PAGE STYLES ── */
         .hero {
             min-height: 100vh; display: flex; align-items: center;
             padding: 120px 48px 80px; position: relative; overflow: hidden;
@@ -255,6 +438,7 @@
         .footer-links a:hover { color: var(--champagne); }
         .footer-copy { font-size: 12px; color: var(--mauve); }
 
+        /* ── SHARED MOBILE ── */
         @media (max-width: 768px) {
             .hero { padding: 100px 24px 60px; }
             .hero-title { font-size: 48px; }
@@ -268,6 +452,14 @@
             .cta { padding: 60px 24px; }
             .cta h2 { font-size: 36px; }
             .footer { padding: 24px; flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 640px) {
+            .page-wrap    { padding: 100px 20px 60px; }
+            .page-heading { font-size: 40px; }
+            .fd-card      { padding: 24px 20px; }
+            .fd-table th,
+            .fd-table td  { padding: 14px 16px; font-size: 13px; }
+            .delivery-grid { grid-template-columns: 1fr; gap: 20px; }
         }
     </style>
 </head>
@@ -386,6 +578,8 @@
     </div>
     <p class="footer-copy">© {{ date('Y') }} Farm Direct, Kerala</p>
 </footer>
+
+@stack('scripts')
 
 </body>
 </html>
