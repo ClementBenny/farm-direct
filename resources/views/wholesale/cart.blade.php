@@ -1,69 +1,121 @@
-@extends('layouts.wholesale')
+@extends('layouts.public')
 
-@section('title', 'Cart')
+@section('title', 'Your Cart — Farm Direct Wholesale')
 
 @section('content')
 
-    <h1 class="text-xl font-bold text-gray-800 mb-6">Your Cart</h1>
+<style>
+    .qty-input {
+        width: 64px; text-align: center;
+        border: 1.5px solid rgba(75,54,33,0.22);
+        border-radius: 999px; padding: 6px 10px;
+        font-size: 14px; color: var(--umber);
+        background: var(--ivory); font-family: 'Jost', sans-serif;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        -moz-appearance: textfield;
+    }
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .qty-input:focus {
+        outline: none; border-color: var(--umber);
+        box-shadow: 0 0 0 3px rgba(75,54,33,0.1);
+    }
+    .remove-btn {
+        display: inline-flex; align-items: center; gap: 5px;
+        font-size: 12px; letter-spacing: 0.06em; color: rgba(140,40,40,0.6);
+        background: none; border: none; cursor: pointer;
+        font-family: 'Jost', sans-serif; font-weight: 400;
+        padding: 0; transition: color 0.2s;
+    }
+    .remove-btn:hover { color: #8c2828; }
+    .remove-btn i { font-size: 14px; }
+    .cart-actions {
+        display: flex; align-items: center;
+        justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    @media (max-width: 640px) {
+        .cart-actions { flex-direction: column; align-items: stretch; text-align: center; }
+    }
+</style>
 
-    @if (empty($cart))
-        <p class="text-gray-500 text-sm">Your cart is empty. <a href="{{ route('wholesale.index') }}" class="text-green-700 underline">Browse products</a></p>
+<div class="page-wrap">
+
+    <p class="section-label">Wholesale Account</p>
+    <h1 class="page-heading">Your Cart</h1>
+
+    @if(empty($cart))
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="ph-light ph-shopping-cart"></i></div>
+            <h3>Your cart is empty</h3>
+            <p>Add some products to get started.</p>
+            <a href="{{ route('wholesale.index') }}" class="btn-primary">Browse wholesale</a>
+        </div>
     @else
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+        <p class="page-sub">{{ count($cart) }} {{ Str::plural('item', count($cart)) }} in your cart</p>
+
+        <div class="fd-card fd-card--flush">
+            <table class="fd-table">
+                <thead>
                     <tr>
-                        <th class="text-left px-4 py-3">Product</th>
-                        <th class="text-left px-4 py-3">Bulk Price</th>
-                        <th class="text-left px-4 py-3">Quantity</th>
-                        <th class="text-left px-4 py-3">Subtotal</th>
-                        <th class="px-4 py-3"></th>
+                        <th>Product</th>
+                        <th>Bulk Price</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @foreach ($cart as $productId => $quantity)
-                        @if ($products->has($productId))
+                <tbody>
+                    @foreach($cart as $productId => $quantity)
+                        @if($products->has($productId))
                             @php $product = $products[$productId]; @endphp
                             <tr>
-                                <td class="px-4 py-3 font-medium text-gray-800">{{ $product->name }}</td>
-                                <td class="px-4 py-3 text-gray-600">₹{{ number_format($product->bulk_price, 2) }} / {{ $product->unit }}</td>
-                                <td class="px-4 py-3">
-                                    <form method="POST" action="{{ route('wholesale.cart.update') }}">
+                                <td>{{ $product->name }}</td>
+                                <td class="muted">₹{{ number_format($product->bulk_price, 2) }} / {{ $product->unit }}</td>
+                                <td>
+                                    <form action="{{ route('wholesale.cart.update') }}" method="POST" style="display:flex;justify-content:flex-end;">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $productId }}">
-                                        <input type="number" name="quantity" value="{{ $quantity }}" min="1"
+                                        <input type="number" name="quantity"
+                                               value="{{ $quantity }}"
+                                               min="{{ $product->min_order_qty }}"
+                                               max="{{ $product->stock }}"
                                                onchange="this.form.submit()"
-                                               class="w-16 border border-gray-300 rounded px-2 py-1 text-sm">
+                                               class="qty-input">
                                     </form>
                                 </td>
-                                <td class="px-4 py-3 text-gray-800">₹{{ number_format($product->bulk_price * $quantity, 2) }}</td>
-                                <td class="px-4 py-3">
-                                    <form method="POST" action="{{ route('wholesale.cart.remove') }}">
+                                <td>₹{{ number_format($product->bulk_price * $quantity, 2) }}</td>
+                                <td style="text-align:center;">
+                                    <form action="{{ route('wholesale.cart.remove') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $productId }}">
-                                        <button class="text-red-500 hover:text-red-700 text-xs">Remove</button>
+                                        <button type="submit" class="remove-btn">
+                                            <i class="ph ph-trash"></i> Remove
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
                         @endif
                     @endforeach
                 </tbody>
-                <tfoot class="bg-gray-50">
+                <tfoot>
                     <tr>
-                        <td colspan="3" class="px-4 py-3 text-sm font-semibold text-gray-700 text-right">Total</td>
-                        <td class="px-4 py-3 text-base font-bold text-green-700">₹{{ number_format($total, 2) }}</td>
-                        <td></td>
+                        <td colspan="3">Order Total</td>
+                        <td colspan="2">₹{{ number_format($total, 2) }}</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        <div class="mt-6 flex justify-between items-center">
-            <a href="{{ route('wholesale.index') }}" class="text-sm text-gray-500 hover:text-gray-700">← Continue Shopping</a>
-            <a href="{{ route('wholesale.checkout') }}"
-               class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-6 py-2.5 rounded-lg">
-                Proceed to Checkout
+        <div class="cart-actions">
+            <a href="{{ route('wholesale.index') }}" class="back-link">
+                <i class="ph ph-arrow-left"></i> Continue shopping
+            </a>
+            <a href="{{ route('wholesale.checkout') }}" class="btn-primary">
+                Proceed to checkout &nbsp;<i class="ph ph-arrow-right"></i>
             </a>
         </div>
     @endif
+
+</div>
+
 @endsection
