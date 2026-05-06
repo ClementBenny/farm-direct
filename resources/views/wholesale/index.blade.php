@@ -66,7 +66,7 @@
                     style="background: var(--ivory); border-color: rgba(196,164,132,0.2); cursor: pointer;">
                     <div class="relative h-76 w-full overflow-hidden rounded-t-3xl" style="background: var(--champagne);">
                         @if($product->image)
-                            <img src="{{ Storage::url($product->image) }}"
+                            <img src="{{ Storage::url($product->image) }}" loading="lazy"
                                  class="block w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-110">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-6xl opacity-30">🥬</div>

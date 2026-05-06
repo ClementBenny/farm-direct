@@ -4,27 +4,57 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product; // Added this to support lowStockProducts
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class StaffController extends Controller
 {
+    /**
+     * Display the staff dashboard with order stats and low stock alerts.
+     */
     public function dashboard()
     {
-        // Orders that need action today — not delivered or cancelled
-        $activeOrders = Order::with('user')
-            ->whereNotIn('status', ['delivered', 'cancelled'])
-            ->orderBy('created_at')
-            ->get();
-
+        // 1. Get counts for specific order statuses
         $statusCounts = [
-            'pending'   => $activeOrders->where('status', 'pending')->count(),
-            'confirmed' => $activeOrders->where('status', 'confirmed')->count(),
-            'picking'   => $activeOrders->where('status', 'picking')->count(),
-            'packed'    => $activeOrders->where('status', 'packed')->count(),
+            'pending'   => Order::where('status', 'pending')->count(),
+            'confirmed' => Order::where('status', 'confirmed')->count(),
+            'picking'   => Order::where('status', 'picking')->count(),
+            'packed'    => Order::where('status', 'packed')->count(),
         ];
 
-        return view('staff.dashboard', compact('activeOrders', 'statusCounts'));
+        // 2. Get the 10 most recent active orders
+        $activeOrders = Order::whereIn('status', ['pending', 'confirmed', 'picking', 'packed'])
+            ->with(['user', 'items'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        // 3. Find products that are running low on stock
+        $lowStockProducts = Product::where('is_active', true)
+            ->where('stock', '<=', 10)
+            ->orderBy('stock')
+            ->get();
+
+        // 4. Get list of orders delivered today
+        $outForDelivery = Order::where('status', 'delivered')
+            ->whereDate('updated_at', today())
+            ->with('user')
+            ->latest()
+            ->get();
+
+        // 5. Count of orders delivered today
+        $deliveredToday = Order::where('status', 'delivered')
+            ->whereDate('updated_at', today())
+            ->count();
+
+        return view('staff.dashboard', compact(
+            'statusCounts', 
+            'activeOrders', 
+            'lowStockProducts', 
+            'outForDelivery', 
+            'deliveredToday'
+        ));
     }
 
     public function orders()

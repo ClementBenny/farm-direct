@@ -12,6 +12,7 @@ class ShopController extends Controller
     {
         $products = Product::with('category')
             ->where('is_active', true)
+            ->with('category')
             ->orderBy('category_id')
             ->orderBy('name')
             ->get();
@@ -28,6 +29,7 @@ class ShopController extends Controller
         $products = Product::with('category')
             ->where('category_id', $category->id)
             ->where('is_active', true)
+            ->with('category')
             ->orderBy('name')
             ->get();
 

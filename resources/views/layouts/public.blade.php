@@ -473,7 +473,9 @@
 
     {{-- ── DESKTOP ── --}}
     <div class="nav-right">
-        <a href="{{ route('produce') }}" class="nav-link">Produce</a>
+        @guest
+            <a href="{{ route('produce') }}" class="nav-link">Produce</a>
+        @endguest
 
         @auth
             @php $role = auth()->user()->role ?? 'customer'; @endphp

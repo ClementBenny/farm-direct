@@ -12,9 +12,10 @@ class ShopController extends Controller
     {
         $categories = Category::withCount('products')->orderBy('name')->get();
         $products = Product::where('is_active', true)
-                   ->orderBy('category_id')
-                   ->orderBy('name')
-                   ->get();
+            ->with('category')         
+            ->orderBy('category_id')
+            ->orderBy('name')
+            ->get();
 
         return view('shop.index', compact('categories', 'products'));
     }
@@ -23,6 +24,7 @@ class ShopController extends Controller
     {
         $categories = Category::withCount('products')->orderBy('name')->get();
         $products   = Product::where('is_active', true)
+                             ->with('category')
                              ->where('category_id', $category->id)
                              ->orderBy('name')
                              ->get();

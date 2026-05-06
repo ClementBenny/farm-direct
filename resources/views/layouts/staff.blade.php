@@ -6,96 +6,253 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }} — Staff</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        :root {
+            --ivory:     #FFFBF0;
+            --champagne: #F7E7CE;
+            --mauve:     #C4A484;
+            --olive:     #808000;
+            --umber:     #4B3621;
+        }
+
+        body { 
+            background: var(--ivory); 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            font-size: 15px;
+            color: var(--umber);
+            line-height: 1.6;
+        }
+        
+        .staff-wrapper {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .staff-sidebar {
+            width: 260px; 
+            background: var(--umber); 
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            height: 100vh; 
+            display: flex;
+            flex-direction: column; 
+            z-index: 20;
+            flex-shrink: 0;
+        }
+
+        .staff-main { 
+            margin-left: 260px; 
+            flex: 1;
+            display: flex; 
+            flex-direction: column; 
+            min-width: 0;
+            width: calc(100% - 260px);
+        }
+
+        .staff-topbar {
+            height: 64px; 
+            background: var(--champagne);
+            border-bottom: 1px solid rgba(196,164,132,0.35);
+            padding: 0 2rem;
+            display: flex; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .staff-topbar h1 { 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: var(--umber); 
+            text-transform: uppercase; 
+            letter-spacing: .05em; 
+            margin: 0; 
+        }
+
+        .staff-content { 
+            flex: 1; 
+            padding: 2rem; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+
+        .sidebar-logo { 
+            padding: 24px 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.08); 
+        }
+
+        .sidebar-logo span { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: var(--champagne); 
+            letter-spacing: .04em; 
+            text-transform: uppercase; 
+        }
+
+        .sidebar-logo small { 
+            display: block; 
+            font-size: 12px; 
+            color: var(--mauve); 
+            letter-spacing: .1em; 
+            margin-top: 2px; 
+        }
+
+        .sidebar-nav { 
+            flex: 1; 
+            padding: 20px 14px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+        }
+
+        .sidebar-nav a {
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            padding: 12px 16px; 
+            border-radius: 10px;
+            font-size: 15px; 
+            font-weight: 500; 
+            color: rgba(247,231,206,0.7);
+            text-decoration: none; 
+            transition: all .2s;
+        }
+
+        .sidebar-nav a i { font-size: 20px; }
+        .sidebar-nav a:hover { background: rgba(255,255,255,0.07); color: var(--champagne); }
+        .sidebar-nav a.active { background: rgba(128,128,0,0.3); color: #fff; }
+
+        .sidebar-nav .nav-section { 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            letter-spacing: .12em; 
+            color: rgba(196,164,132,0.5); 
+            padding: 15px 16px 8px; 
+        }
+
+        .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 10px; margin-bottom: 8px; }
+        .sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--olive); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .sidebar-user-name { font-size: 14px; font-weight: 600; color: var(--champagne); }
+        .sidebar-user-role { font-size: 12px; color: var(--mauve); }
+
+        .sidebar-logout { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 10px; 
+            font-size: 14px; 
+            color: rgba(196,164,132,0.7); 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            transition: all .2s; 
+            text-align: left; 
+        }
+
+        .sidebar-logout:hover { background: rgba(255,255,255,0.06); color: var(--champagne); }
+
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat { background: var(--champagne); border-radius: 16px; padding: 20px; border: 1px solid rgba(196,164,132,0.3); }
+        .stat-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--mauve); margin-bottom: 8px; }
+        .stat-num { font-size: 32px; font-weight: 700; line-height: 1; color: var(--umber); }
+
+        .s-card { background: #fff; border: 1px solid rgba(196,164,132,0.3); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .s-card-head { padding: 16px 20px; border-bottom: 1px solid rgba(196,164,132,0.2); display: flex; align-items: center; justify-content: space-between; background: var(--champagne); }
+        .s-card-title { font-size: 14px; font-weight: 700; color: var(--umber); text-transform: uppercase; letter-spacing: .07em; }
+        .s-card-link { font-size: 14px; color: var(--olive); text-decoration: none; font-weight: 600; }
+
+        .s-row { padding: 14px 20px; border-bottom: 1px solid rgba(196,164,132,0.12); display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+        .s-row-ref { font-size: 15px; font-weight: 700; color: var(--umber); }
+        .s-row-meta { font-size: 13px; color: var(--mauve); }
+
+        .s-badge { font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
+        .s-badge-pending   { background:#FEF3C7; color:#92400E; }
+        .s-badge-confirmed { background:#DBEAFE; color:#1E40AF; }
+        .s-badge-picking   { background:#EDE9FE; color:#5B21B6; }
+        .s-badge-packed    { background:#E0E7FF; color:#3730A3; }
+        .s-badge-delivered { background:#D1FAE5; color:#065F46; }
+        .s-badge-cancelled { background:#FEE2E2; color:#991B1B; }
+
+        .s-open-btn { font-size: 13px; color: var(--olive); text-decoration: none; font-weight: 700; padding: 8px 16px; border: 1.5px solid rgba(128,128,0,0.3); border-radius: 8px; transition: all .2s; }
+        .s-open-btn:hover { background: var(--olive); color: #fff; }
+
+        .s-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .s-low-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .s-low-item { padding: 14px 20px; border-bottom: 1px solid rgba(196,164,132,0.12); border-right: 1px solid rgba(196,164,132,0.12); display: flex; align-items: center; justify-content: space-between; }
+        .s-low-name { font-size: 14px; color: var(--umber); font-weight: 700; }
+        .s-low-sub  { font-size: 12px; color: var(--mauve); }
+        .s-stock-pill { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
+
+        @media(max-width: 992px) {
+            .staff-sidebar { width: 100%; height: auto; position: relative; }
+            .staff-main { margin-left: 0; width: 100%; }
+            .s-two-col, .s-low-grid { grid-template-columns: 1fr; }
+            .s-low-item { border-right: none; }
+        }
+    </style>
+    @stack('styles')
 </head>
-<body class="bg-gray-100 text-gray-900 antialiased">
+<body>
 
-<div class="flex min-h-screen">
+<div class="staff-wrapper">
 
-    {{-- Sidebar --}}
-    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-full z-10">
-
-        {{-- Logo --}}
-        <div class="h-16 flex items-center px-6 border-b border-gray-200">
-            <span class="text-lg font-semibold text-green-700">Farm Direct</span>
+    <aside class="staff-sidebar">
+        <div class="sidebar-logo">
+            <span>Farm Direct</span>
+            <small>Staff Portal</small>
         </div>
 
-        {{-- Navigation --}}
-        <nav class="flex-1 px-4 py-6 space-y-1">
-
-            <a href="{{ route('staff.dashboard') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
-               {{ request()->routeIs('staff.dashboard') ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                Dashboard
+        <nav class="sidebar-nav">
+            <span class="nav-section">Main Menu</span>
+            <a href="{{ route('staff.dashboard') }}" class="{{ request()->routeIs('staff.dashboard') ? 'active' : '' }}">
+                <i class="ti ti-layout-dashboard"></i> Dashboard
             </a>
-
-            <a href="{{ route('staff.orders') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
-               {{ request()->routeIs('staff.orders*') ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
-                Orders
+            <a href="{{ route('staff.orders') }}" class="{{ request()->routeIs('staff.orders*') ? 'active' : '' }}">
+                <i class="ti ti-clipboard-list"></i> Orders
             </a>
-
-            <a href="{{ route('staff.stock') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
-               {{ request()->routeIs('staff.stock*') ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                </svg>
-                Stock
+            <a href="{{ route('staff.stock') }}" class="{{ request()->routeIs('staff.stock*') ? 'active' : '' }}">
+                <i class="ti ti-package"></i> Stock Inventory
             </a>
-
         </nav>
 
-        {{-- Bottom: user + logout --}}
-        <div class="px-4 py-4 border-t border-gray-200">
-            <div class="flex items-center gap-3 px-3 py-2">
-                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-medium">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->name }}</p>
-                    <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div>
+                    <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
+                    <div class="sidebar-user-role">Staff Member</div>
                 </div>
             </div>
-            <form method="POST" action="{{ route('logout') }}" class="mt-2">
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit"
-                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    Logout
+                <button type="submit" class="sidebar-logout">
+                    <i class="ti ti-logout"></i> Sign out
                 </button>
             </form>
         </div>
-
     </aside>
 
-    {{-- Main content --}}
-    <div class="flex-1 ml-64 flex flex-col min-h-screen">
-
-        {{-- Top bar --}}
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center px-8">
-            <h1 class="text-base font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
+    <div class="staff-main">
+        <header class="staff-topbar">
+            <h1>@yield('page-title', 'Staff Dashboard')</h1>
         </header>
-
-        {{-- Page content --}}
-        <main class="flex-1 p-8">
+        <main class="staff-content">
             @yield('content')
         </main>
-
     </div>
 
 </div>
 
+<link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+@stack('scripts')
 </body>
 </html>
