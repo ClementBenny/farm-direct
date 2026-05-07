@@ -3,58 +3,60 @@
 @section('page-title', 'Orders')
 
 @section('content')
-
-<h1 class="text-2xl font-bold text-gray-800 mb-6">Active Orders</h1>
-
 @php
-    $statusColours = [
-        'pending'   => 'bg-yellow-100 text-yellow-700',
-        'confirmed' => 'bg-blue-100 text-blue-700',
-        'picking'   => 'bg-purple-100 text-purple-700',
-        'packed'    => 'bg-indigo-100 text-indigo-700',
-        'delivered' => 'bg-green-100 text-green-700',
-        'cancelled' => 'bg-red-100 text-red-700',
-    ];
+$statusColours = [
+    'pending'   => 's-badge-pending',
+    'confirmed' => 's-badge-confirmed',
+    'picking'   => 's-badge-picking',
+    'packed'    => 's-badge-packed',
+    'delivered' => 's-badge-delivered',
+    'cancelled' => 's-badge-cancelled',
+];
 @endphp
 
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 border-b border-gray-200">
-            <tr>
-                <th class="text-left px-6 py-3 font-medium text-gray-500">Order</th>
-                <th class="text-left px-6 py-3 font-medium text-gray-500">Customer</th>
-                <th class="text-left px-6 py-3 font-medium text-gray-500">Status</th>
-                <th class="text-left px-6 py-3 font-medium text-gray-500">Placed</th>
-                <th class="text-left px-6 py-3 font-medium text-gray-500">Address</th>
-                <th class="px-6 py-3"></th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse($orders as $order)
-            <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-6 py-4 font-mono text-gray-500">
-                    #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
-                </td>
-                <td class="px-6 py-4 font-medium text-gray-800">{{ $order->user->name }}</td>
-                <td class="px-6 py-4">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusColours[$order->status] }}">
-                        {{ ucfirst($order->status) }}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-gray-500">{{ $order->created_at->diffForHumans() }}</td>
-                <td class="px-6 py-4 text-gray-500 max-w-xs truncate">{{ $order->delivery_address }}</td>
-                <td class="px-6 py-4 text-right">
-                    <a href="{{ route('staff.orders.show', $order) }}"
-                       class="text-green-600 hover:text-green-800 font-medium">Open →</a>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="text-center text-gray-400 py-12">No active orders.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+<div style="margin-bottom:1.5rem;">
+    <h1 style="font-size:20px;font-weight:700;color:var(--umber);margin:0;">Active Orders</h1>
+    <span style="font-size:13px;color:var(--mauve);">Orders currently being processed — sorted by urgency</span>
 </div>
 
+<div class="s-card">
+    <div class="s-card-head">
+        <span class="s-card-title">
+            <i class="ti ti-clipboard-list" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:6px;"></i>
+            All active orders
+        </span>
+        <span style="font-size:12px;color:var(--mauve);">{{ $orders->count() }} orders</span>
+    </div>
+
+    @forelse($orders as $order)
+    <a href="{{ route('staff.orders.show', $order) }}" class="s-row" style="text-decoration:none;display:flex;">
+        <div style="flex:1;min-width:0;">
+            <div class="s-row-ref">
+                #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
+                <span style="color:var(--mauve);font-weight:400;font-size:13px;">· {{ $order->user->name }}</span>
+                <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;
+                      color:{{ $order->user->role === 'shop' ? 'var(--olive)' : 'var(--mauve)' }};
+                      background:{{ $order->user->role === 'shop' ? 'rgba(128,128,0,0.1)' : 'rgba(196,164,132,0.15)' }};
+                      padding:2px 7px;border-radius:4px;margin-left:6px;">
+                    {{ $order->user->role === 'shop' ? 'Wholesale' : 'Retail' }}
+                </span>
+            </div>
+            <div class="s-row-meta" style="margin-top:3px;">
+                <i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px;vertical-align:-1px;margin-right:3px;"></i>
+                {{ Str::limit($order->delivery_address, 50) }}
+                · {{ $order->created_at->diffForHumans() }}
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            <span class="s-badge {{ $statusColours[$order->status] }}">{{ ucfirst($order->status) }}</span>
+            <i class="ti ti-chevron-right" aria-hidden="true" style="color:var(--mauve);font-size:16px;"></i>
+        </div>
+    </a>
+    @empty
+    <div class="s-empty">
+        <i class="ti ti-circle-check" aria-hidden="true" style="font-size:32px;color:var(--mauve);display:block;margin-bottom:8px;"></i>
+        No active orders right now.
+    </div>
+    @endforelse
+</div>
 @endsection

@@ -96,7 +96,7 @@
             <div class="s-row-meta">
                 <span style="text-transform: uppercase; font-weight: 600; font-size: 11px;">{{ $order->user->role === 'shop' ? 'Wholesale' : 'Retail' }}</span>
                 · {{ $order->items->count() }} {{ Str::plural('item', $order->items->count()) }}
-                · ₹{{ number_format($order->total_price, 2) }}
+                · ₹{{ number_format($order->total, 2) }}
                 · {{ $order->created_at->diffForHumans() }}
             </div>
         </div>
@@ -166,7 +166,7 @@
         </div>
         <div class="s-footer-note" style="background: var(--ivory); padding: 12px 20px;">
             <span>Daily Performance</span>
-            <strong>{{ $deliveredToday }} Orders Processed</strong>
+            <strong>{{ $deliveredToday }} Orders Delivered Today</strong>
         </div>
     </div>
 

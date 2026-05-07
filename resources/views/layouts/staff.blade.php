@@ -182,6 +182,10 @@
         .s-badge-delivered { background:#D1FAE5; color:#065F46; }
         .s-badge-cancelled { background:#FEE2E2; color:#991B1B; }
 
+        .s-empty { padding: 2rem; text-align: center; color: var(--mauve); font-size: 13px; }
+        .s-footer-note { padding: 12px 20px; border-top: 1px solid rgba(196,164,132,0.15); display: flex; justify-content: space-between; font-size: 12px; color: var(--mauve); }
+        .s-footer-note strong { color: var(--umber); font-weight: 600; }
+
         .s-open-btn { font-size: 13px; color: var(--olive); text-decoration: none; font-weight: 700; padding: 8px 16px; border: 1.5px solid rgba(128,128,0,0.3); border-radius: 8px; transition: all .2s; }
         .s-open-btn:hover { background: var(--olive); color: #fff; }
 
