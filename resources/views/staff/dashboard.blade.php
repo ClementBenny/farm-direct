@@ -143,7 +143,7 @@
         </div>
     </div>
 
-    {{-- Out for delivery / Recently Delivered --}}
+    {{-- Out for delivery / Recently Delivery --}}
     <div class="s-card">
         <div class="s-card-head">
             <span class="s-card-title">
