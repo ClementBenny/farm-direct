@@ -14,7 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
 
          $middleware->alias([
-        'role' => \App\Http\Middleware\EnsureRole::class,]);
+        'role' => \App\Http\Middleware\EnsureRole::class,
+        'no.back'      => \App\Http\Middleware\PreventBackHistory::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 // Admin routes — only admin role can access
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin', 'no.back'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
@@ -37,7 +37,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Customer routes — only customer role can access
-    Route::middleware(['auth', 'role:customer'])->prefix('shop')->name('shop.')->group(function () {
+Route::middleware(['auth', 'role:customer', 'no.back'])->prefix('shop')->name('shop.')->group(function () {
     Route::get('/category/{category}', [ShopController::class, 'category'])->name('category');
     Route::get('/', [ShopController::class, 'index'])->name('index');
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders');
@@ -52,7 +52,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Wholesale (Shop role)
-Route::middleware(['auth', 'role:shop'])->prefix('wholesale')->name('wholesale.')->group(function () {
+Route::middleware(['auth', 'role:shop', 'no.back'])->prefix('wholesale')->name('wholesale.')->group(function () {
     // Browse
     Route::get('/', [Wholesale\ShopController::class, 'index'])->name('index');
     Route::get('/category/{category}', [Wholesale\ShopController::class, 'category'])->name('category');
@@ -71,7 +71,7 @@ Route::middleware(['auth', 'role:shop'])->prefix('wholesale')->name('wholesale.'
 });
 
 // Staff routes — only staff role can access
-Route::middleware(['auth', 'role:staff'])->prefix('staff')->name('staff.')->group(function () {
+Route::middleware(['auth', 'role:staff', 'no.back'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('/', [StaffController::class, 'dashboard'])->name('dashboard');
     Route::get('/orders', [StaffController::class, 'orders'])->name('orders');
     Route::get('/orders/{order}', [StaffController::class, 'show'])->name('orders.show');
