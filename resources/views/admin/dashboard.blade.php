@@ -3,149 +3,174 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-{{-- Main Wrapper --}}
-<div class="w-full">
-    
-    {{-- Header --}}
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p class="text-sm text-gray-500 mt-1">Platform overview and system metrics.</p>
+
+<div class="a-page-head">
+    <div>
+        <div class="a-page-title">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ explode(' ', auth()->user()->name)[0] }}</div>
+        <div class="a-page-sub">{{ now()->format('l, j F Y') }} &mdash; Platform overview</div>
     </div>
+</div>
 
-    {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        
-        {{-- Users --}}
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Users</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($totalUsers) }}</p>
-                </div>
-                <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </div>
-            </div>
+<div class="a-stat-grid">
+    <div class="a-stat">
+        <div>
+            <div class="a-stat-label">Total Users</div>
+            <div class="a-stat-num">{{ number_format($totalUsers) }}</div>
         </div>
-
-        {{-- Products --}}
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Products</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($totalProducts) }}</p>
-                </div>
-                <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                </div>
-            </div>
-        </div>
-
-        {{-- Orders --}}
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Orders</p>
-                    <div class="flex items-baseline gap-2">
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($totalOrders) }}</p>
-                        <span class="text-xs text-amber-600 font-medium">{{ $pendingOrders }} pending</span>
-                    </div>
-                </div>
-                <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                </div>
-            </div>
-        </div>
-
-        {{-- Revenue --}}
-        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm border-dashed">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Revenue</p>
-            <p class="text-sm italic text-gray-400 mt-2 text-center uppercase tracking-widest font-bold">Phase 3 Only</p>
-        </div>
-
+        <div class="a-stat-icon"><i class="ti ti-user"></i></div>
     </div>
+    <div class="a-stat">
+        <div>
+            <div class="a-stat-label">Products</div>
+            <div class="a-stat-num">{{ number_format($totalProducts) }}</div>
+        </div>
+        <div class="a-stat-icon"><i class="ti ti-clipboard-list"></i></div>
+    </div>
+    <div class="a-stat">
+        <div>
+            <div class="a-stat-label">Total Orders</div>
+            <div class="a-stat-num">{{ number_format($totalOrders) }}</div>
+            @if($pendingOrders > 0)
+                <div class="a-stat-sub">{{ $pendingOrders }} pending</div>
+            @endif
+        </div>
+        <div class="a-stat-icon"><i class="ti ti-shopping-bag"></i></div>
+    </div>
+    <div class="a-stat" style="border-style:dashed; opacity:0.55;">
+        <div>
+            <div class="a-stat-label">Revenue</div>
+            <div style="font-size:12px; font-weight:700; color:var(--muted); font-style:italic; margin-top:6px;">Phase 3 only</div>
+        </div>
+        <div class="a-stat-icon" style="opacity:0.4;"><i class="ti ti-device-desktop-analytics"></i></div>
+    </div>
+</div>
 
-    {{-- Lower Section --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        
-        {{-- Role Distribution --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div class="px-5 py-4 border-b border-gray-100">
-                <h3 class="text-sm font-bold text-gray-700 uppercase">Users by Role</h3>
-            </div>
-            <div class="p-5 space-y-4">
+<div class="a-two-col" style="margin-bottom:1.5rem;">
+
+    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+
+        <div class="a-card">
+            <div class="a-card-head"><span class="a-card-title">Users by Role</span></div>
+            <div class="a-card-body">
                 @php
-                    $roleConfig = [
-                        'admin'    => ['bg' => 'bg-purple-100', 'text' => 'text-purple-700', 'bar' => 'bg-purple-600'],
-                        'customer' => ['bg' => 'bg-blue-100',   'text' => 'text-blue-700',   'bar' => 'bg-blue-600'],
-                        'shop'     => ['bg' => 'bg-amber-100',  'text' => 'text-amber-700',  'bar' => 'bg-amber-600'],
-                        'staff'    => ['bg' => 'bg-green-100',  'text' => 'text-green-700',  'bar' => 'bg-green-600'],
+                    $roleColors = [
+                        'admin'    => ['fill' => '#5b21b6', 'badge' => 'a-badge-admin'],
+                        'customer' => ['fill' => '#1e40af', 'badge' => 'a-badge-customer'],
+                        'shop'     => ['fill' => '#92400e', 'badge' => 'a-badge-shop'],
+                        'staff'    => ['fill' => '#065f46', 'badge' => 'a-badge-staff'],
                     ];
                 @endphp
-
-                @foreach(['admin', 'customer', 'shop', 'staff'] as $role)
-                @php
-                    $count = $usersByRole[$role] ?? 0;
-                    $percent = $totalUsers > 0 ? ($count / $totalUsers) * 100 : 0;
-                    $cfg = $roleConfig[$role];
-                @endphp
-                <div>
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $cfg['bg'] }} {{ $cfg['text'] }}">{{ $role }}</span>
-                        <span class="text-sm font-semibold text-gray-800">{{ $count }}</span>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                    @foreach(['admin', 'customer', 'shop', 'staff'] as $role)
+                    @php $count = $usersByRole[$role] ?? 0; @endphp
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+                        <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:capitalize; margin-bottom:6px;">{{ ucfirst($role) }}</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:var(--dark); line-height:1;">{{ $count }}</div>
                     </div>
-                    <div class="w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="{{ $cfg['bar'] }} h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
             </div>
         </div>
 
-        {{-- Recent Users Table --}}
-        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="text-sm font-bold text-gray-700 uppercase">Recently Joined</h3>
-                <a href="{{ route('admin.users.index') }}" class="text-xs font-bold text-indigo-600 hover:underline">View All &rarr;</a>
+        <div class="a-card">
+            <div class="a-card-head">
+                <span class="a-card-title">Recently Joined</span>
+                <a href="{{ route('admin.users.index') }}" class="a-card-link">View all &rarr;</a>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left whitespace-nowrap">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-100">
-                            <th class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">User</th>
-                            <th class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Role</th>
-                            <th class="px-5 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Joined</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($recentUsers as $user)
-                        <tr class="hover:bg-gray-50/50 transition">
-                            <td class="px-5 py-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs text-gray-500 border">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-gray-800 leading-none">{{ $user->name }}</p>
-                                        <p class="text-[11px] text-gray-400 mt-0.5">{{ $user->email }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-5 py-3">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $roleConfig[$user->role]['bg'] ?? 'bg-gray-100' }} {{ $roleConfig[$user->role]['text'] ?? 'text-gray-600' }}">
-                                    {{ $user->role }}
+            <div>
+                @forelse($recentUsers as $user)
+                <div class="a-row">
+                    <div class="a-avatar" style="width:36px; height:36px; font-size:13px; background:var(--bg);">
+                        {{ strtoupper(substr($user->name, 0, 2)) }}
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:13px; font-weight:700; color:var(--dark); line-height:1.2;">{{ $user->name }}</div>
+                        <div style="font-size:11px; color:var(--muted);">{{ $user->email }}</div>
+                    </div>
+                </div>
+                @empty
+                <div class="a-empty">No users yet.</div>
+                @endforelse
+            </div>
+        </div>
+
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+
+        <div class="a-card">
+            <div class="a-card-head">
+                <div>
+                    <div class="a-card-title">Stock Alerts</div>
+                    @php $lowStock = \App\Models\Product::where('stock', '<=', 10)->orderBy('stock')->get(); @endphp
+                    @if($lowStock->isNotEmpty())
+                        <div style="font-size:12px; color:var(--muted); margin-top:3px;">{{ $lowStock->count() }} product(s) need attention</div>
+                    @endif
+                </div>
+                @if($lowStock->isNotEmpty())
+                    <span class="a-badge" style="background:#fee2e2; color:#991b1b;">{{ $lowStock->count() }} attention required</span>
+                @endif
+            </div>
+            @if($lowStock->isEmpty())
+                <div class="a-empty">All stock levels healthy.</div>
+            @else
+                <table class="a-table">
+                    <tbody>
+                        @foreach($lowStock as $product)
+                        <tr>
+                            <td style="font-weight:600;">{{ $product->name }}</td>
+                            <td style="font-weight:700; color:{{ $product->stock === 0 ? '#991b1b' : '#92400e' }};">{{ $product->stock }} units</td>
+                            <td class="right">
+                                <span class="a-pill {{ $product->stock === 0 ? 'a-pill-critical' : 'a-pill-low' }}">
+                                    {{ $product->stock === 0 ? 'Out' : 'Low' }}
                                 </span>
-                            </td>
-                            <td class="px-5 py-3 text-right text-xs text-gray-400">
-                                {{ $user->created_at->diffForHumans() }}
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-            </div>
+            @endif
         </div>
 
     </div>
+
 </div>
+
+<div class="a-card">
+    <div class="a-card-head">
+        <span class="a-card-title">Recent Orders</span>
+        <a href="{{ route('admin.orders.index') }}" class="a-card-link">View all &rarr;</a>
+    </div>
+    @php $recentOrders = \App\Models\Order::with('user')->latest()->take(8)->get(); @endphp
+    @if($recentOrders->isEmpty())
+        <div class="a-empty">No orders yet.</div>
+    @else
+    <table class="a-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer / Time</th>
+                <th>Status</th>
+                <th class="right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($recentOrders as $order)
+            <tr style="cursor:pointer;" onclick="window.location='{{ route('admin.orders.show', $order) }}'">
+                <td style="font-weight:700; font-family:monospace; font-size:13px; color:var(--dark);">
+                    #{{ strtoupper(substr(md5($order->id . $order->created_at), 0, 8)) }}
+                </td>
+                <td>
+                    <div style="font-weight:600; font-size:13px; color:var(--dark);">{{ $order->user->name ?? 'Unknown' }}</div>
+                    <div style="font-size:11px; color:var(--muted);">{{ $order->created_at->diffForHumans() }}</div>
+                </td>
+                <td><span class="a-badge a-badge-{{ $order->status }}">{{ $order->status }}</span></td>
+                <td class="right" style="font-weight:700; font-size:13px;">£{{ number_format($order->total, 2) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    @endif
+</div>
+
 @endsection
