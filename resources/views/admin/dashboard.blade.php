@@ -11,6 +11,7 @@
     </div>
 </div>
 
+{{-- Stat strip --}}
 <div class="a-stat-grid">
     <div class="a-stat">
         <div>
@@ -36,106 +37,104 @@
         </div>
         <div class="a-stat-icon"><i class="ti ti-shopping-bag"></i></div>
     </div>
-    <div class="a-stat" style="border-style:dashed; opacity:0.55;">
+    <div class="a-stat">
         <div>
             <div class="a-stat-label">Revenue</div>
-            <div style="font-size:12px; font-weight:700; color:var(--muted); font-style:italic; margin-top:6px;">Phase 3 only</div>
+            <div class="a-stat-num" style="font-size:1.4rem;">₹{{ number_format($totalRevenue, 0) }}</div>
+            <div class="a-stat-sub">excl. cancelled</div>
         </div>
-        <div class="a-stat-icon" style="opacity:0.4;"><i class="ti ti-device-desktop-analytics"></i></div>
+        <div class="a-stat-icon"><i class="ti ti-device-desktop-analytics"></i></div>
     </div>
 </div>
 
-<div class="a-two-col" style="margin-bottom:1.5rem;">
+{{-- Sales chart (full width) --}}
+<div class="a-card">
+    <div class="a-card-head">
+        <span class="a-card-title"><i class="ti ti-chart-area"></i> Sales Overview</span>
+        <span style="font-size:11px; color:var(--muted)">Last 12 weeks &middot; excl. cancelled</span>
+    </div>
+    <div class="a-card-body">
+        <canvas id="salesChart" height="90"></canvas>
+    </div>
+</div>
 
-    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+{{-- Three-column row: Users by Role | Recently Joined | Stock Alerts --}}
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; align-items:start;">
 
-        <div class="a-card">
-            <div class="a-card-head"><span class="a-card-title">Users by Role</span></div>
-            <div class="a-card-body">
-                @php
-                    $roleColors = [
-                        'admin'    => ['fill' => '#5b21b6', 'badge' => 'a-badge-admin'],
-                        'customer' => ['fill' => '#1e40af', 'badge' => 'a-badge-customer'],
-                        'shop'     => ['fill' => '#92400e', 'badge' => 'a-badge-shop'],
-                        'staff'    => ['fill' => '#065f46', 'badge' => 'a-badge-staff'],
-                    ];
-                @endphp
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                    @foreach(['admin', 'customer', 'shop', 'staff'] as $role)
-                    @php $count = $usersByRole[$role] ?? 0; @endphp
-                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
-                        <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:capitalize; margin-bottom:6px;">{{ ucfirst($role) }}</div>
-                        <div style="font-size:1.6rem; font-weight:800; color:var(--dark); line-height:1;">{{ $count }}</div>
-                    </div>
-                    @endforeach
+    <div class="a-card" style="margin-bottom:0">
+        <div class="a-card-head"><span class="a-card-title">Users by Role</span></div>
+        <div class="a-card-body">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                @foreach(['admin', 'customer', 'shop', 'staff'] as $role)
+                @php $count = $usersByRole[$role] ?? 0; @endphp
+                <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+                    <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:capitalize; margin-bottom:6px;">{{ ucfirst($role) }}</div>
+                    <div style="font-size:1.6rem; font-weight:800; color:var(--dark); line-height:1;">{{ $count }}</div>
                 </div>
+                @endforeach
             </div>
         </div>
-
-        <div class="a-card">
-            <div class="a-card-head">
-                <span class="a-card-title">Recently Joined</span>
-                <a href="{{ route('admin.users.index') }}" class="a-card-link">View all &rarr;</a>
-            </div>
-            <div>
-                @forelse($recentUsers as $user)
-                <div class="a-row">
-                    <div class="a-avatar" style="width:36px; height:36px; font-size:13px; background:var(--bg);">
-                        {{ strtoupper(substr($user->name, 0, 2)) }}
-                    </div>
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-size:13px; font-weight:700; color:var(--dark); line-height:1.2;">{{ $user->name }}</div>
-                        <div style="font-size:11px; color:var(--muted);">{{ $user->email }}</div>
-                    </div>
-                </div>
-                @empty
-                <div class="a-empty">No users yet.</div>
-                @endforelse
-            </div>
-        </div>
-
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:1.25rem;">
-
-        <div class="a-card">
-            <div class="a-card-head">
-                <div>
-                    <div class="a-card-title">Stock Alerts</div>
-                    @php $lowStock = \App\Models\Product::where('stock', '<=', 10)->orderBy('stock')->get(); @endphp
-                    @if($lowStock->isNotEmpty())
-                        <div style="font-size:12px; color:var(--muted); margin-top:3px;">{{ $lowStock->count() }} product(s) need attention</div>
-                    @endif
+    <div class="a-card" style="margin-bottom:0">
+        <div class="a-card-head">
+            <span class="a-card-title">Recently Joined</span>
+            <a href="{{ route('admin.users.index') }}" class="a-card-link">View all &rarr;</a>
+        </div>
+        <div>
+            @forelse($recentUsers as $user)
+            <div class="a-row">
+                <div class="a-avatar" style="width:36px; height:36px; font-size:13px; background:var(--bg);">
+                    {{ strtoupper(substr($user->name, 0, 2)) }}
                 </div>
+                <div style="flex:1; min-width:0;">
+                    <div style="font-size:13px; font-weight:700; color:var(--dark); line-height:1.2;">{{ $user->name }}</div>
+                    <div style="font-size:11px; color:var(--muted);">{{ $user->email }}</div>
+                </div>
+            </div>
+            @empty
+            <div class="a-empty">No users yet.</div>
+            @endforelse
+        </div>
+    </div>
+
+    <div class="a-card" style="margin-bottom:0">
+        <div class="a-card-head">
+            <div>
+                <div class="a-card-title">Stock Alerts</div>
+                @php $lowStock = \App\Models\Product::where('stock', '<=', 10)->orderBy('stock')->get(); @endphp
                 @if($lowStock->isNotEmpty())
-                    <span class="a-badge" style="background:#fee2e2; color:#991b1b;">{{ $lowStock->count() }} attention required</span>
+                    <div style="font-size:12px; color:var(--muted); margin-top:3px;">{{ $lowStock->count() }} product(s) need attention</div>
                 @endif
             </div>
-            @if($lowStock->isEmpty())
-                <div class="a-empty">All stock levels healthy.</div>
-            @else
-                <table class="a-table">
-                    <tbody>
-                        @foreach($lowStock as $product)
-                        <tr>
-                            <td style="font-weight:600;">{{ $product->name }}</td>
-                            <td style="font-weight:700; color:{{ $product->stock === 0 ? '#991b1b' : '#92400e' }};">{{ $product->stock }} units</td>
-                            <td class="right">
-                                <span class="a-pill {{ $product->stock === 0 ? 'a-pill-critical' : 'a-pill-low' }}">
-                                    {{ $product->stock === 0 ? 'Out' : 'Low' }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            @if($lowStock->isNotEmpty())
+                <span class="a-badge" style="background:#fee2e2; color:#991b1b;">{{ $lowStock->count() }}</span>
             @endif
         </div>
-
+        @if($lowStock->isEmpty())
+            <div class="a-empty">All stock levels healthy.</div>
+        @else
+            <table class="a-table">
+                <tbody>
+                    @foreach($lowStock as $product)
+                    <tr>
+                        <td style="font-weight:600;">{{ $product->name }}</td>
+                        <td style="font-weight:700; color:{{ $product->stock === 0 ? '#991b1b' : '#92400e' }};">{{ $product->stock }} units</td>
+                        <td class="right">
+                            <span class="a-pill {{ $product->stock === 0 ? 'a-pill-critical' : 'a-pill-low' }}">
+                                {{ $product->stock === 0 ? 'Out' : 'Low' }}
+                            </span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
     </div>
 
 </div>
 
+{{-- Recent Orders (full width) --}}
 <div class="a-card">
     <div class="a-card-head">
         <span class="a-card-title">Recent Orders</span>
@@ -165,7 +164,7 @@
                     <div style="font-size:11px; color:var(--muted);">{{ $order->created_at->diffForHumans() }}</div>
                 </td>
                 <td><span class="a-badge a-badge-{{ $order->status }}">{{ $order->status }}</span></td>
-                <td class="right" style="font-weight:700; font-size:13px;">£{{ number_format($order->total, 2) }}</td>
+                <td class="right" style="font-weight:700; font-size:13px;">₹{{ number_format($order->total, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -174,3 +173,92 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const raw = @json($salesData);
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const labels = raw.map(r => {
+        const month = monthNames[parseInt(r.month_num) - 1];
+        const weekOfMonth = Math.ceil(parseInt(r.day) / 7);
+        return 'W' + weekOfMonth + ' ' + month;
+    });
+    const revenue = raw.map(r => parseFloat(r.revenue ?? 0));
+    const orders  = raw.map(r => parseInt(r.order_count ?? 0));
+
+    new Chart(document.getElementById('salesChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Revenue (₹)',
+                    data: revenue,
+                    yAxisID: 'yRevenue',
+                    fill: true,
+                    backgroundColor: 'rgba(92,74,58,0.10)',
+                    borderColor: 'rgba(92,74,58,0.75)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(92,74,58,0.9)',
+                    pointRadius: 4,
+                    tension: 0.4,
+                },
+                {
+                    label: 'Orders',
+                    data: orders,
+                    yAxisID: 'yOrders',
+                    fill: true,
+                    backgroundColor: 'rgba(128,128,0,0.08)',
+                    borderColor: 'rgba(128,128,0,0.65)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(128,128,0,0.9)',
+                    pointRadius: 4,
+                    tension: 0.4,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'top', align: 'end',
+                    labels: { font: { size: 11, weight: '700' }, color: '#5C4A3A', boxWidth: 12, padding: 16 }
+                },
+                tooltip: {
+                    backgroundColor: '#2C2018',
+                    titleColor: '#F7E7CE',
+                    bodyColor: '#C4A484',
+                    padding: 10,
+                    callbacks: {
+                        label: ctx => ctx.datasetIndex === 0
+                            ? ` ₹${ctx.parsed.y.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+                            : ` ${ctx.parsed.y} orders`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(224,216,206,0.5)' },
+                    ticks: { font: { size: 11 }, color: '#9A8F85' }
+                },
+                yRevenue: {
+                    position: 'left',
+                    grid: { color: 'rgba(224,216,206,0.5)' },
+                    ticks: {
+                        font: { size: 11 }, color: '#5C4A3A',
+                        callback: v => '₹' + v.toLocaleString('en-IN')
+                    }
+                },
+                yOrders: {
+                    position: 'right',
+                    min: 0,
+                    grid: { drawOnChartArea: false },
+                    ticks: { font: { size: 11 }, color: '#808000' }
+                }
+            }
+        }
+    });
+</script>
+@endpush

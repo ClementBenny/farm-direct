@@ -3,81 +3,102 @@
 @section('page-title', 'Products')
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Products</h1>
-    <a href="{{ route('admin.products.create') }}"
-       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        + Add Product
+
+<div class="a-page-head">
+    <div>
+        <h1 class="a-page-title">Products</h1>
+        <p class="a-page-sub">Manage your product catalogue</p>
+    </div>
+    <a href="{{ route('admin.products.create') }}" class="a-btn a-btn-primary">
+        <i class="ti ti-plus"></i> Add Product
     </a>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 border-b border-gray-200">
-            <tr>
-                <th class="text-left px-4 py-3 font-medium text-gray-500">Image</th>
-                <th class="text-left px-4 py-3 font-medium text-gray-500">Name</th>
-                <th class="text-left px-4 py-3 font-medium text-gray-500">Category</th>
-                <th class="text-left px-4 py-3 font-medium text-gray-500">Price</th>
-                <th class="text-left px-4 py-3 font-medium text-gray-500">Stock</th>
-                <th class="text-left px-4 py-3 font-medium text-gray-500">Status</th>
-                <th class="px-4 py-3"></th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse($products as $product)
-            <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-4 py-3">
-                    @if($product->image)
-                        <img src="{{ Storage::url($product->image) }}"
-                             alt="{{ $product->name }}"
-                             class="w-12 h-12 object-cover rounded-lg border border-gray-200">
-                    @else
-                        <div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center text-2xl border border-gray-200">
-                            🥬
+<div class="a-card">
+    <div class="a-card-body" style="padding:0">
+        <table class="a-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th class="right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($products as $product)
+                <tr>
+                    <td>
+                        @if($product->image)
+                            <img src="{{ Storage::url($product->image) }}"
+                                 alt="{{ $product->name }}"
+                                 style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border)">
+                        @else
+                            <div style="width:44px; height:44px; border-radius:8px; background:var(--bg);
+                                        border:1px solid var(--border); display:flex; align-items:center;
+                                        justify-content:center; font-size:1.25rem">
+                                🥬
+                            </div>
+                        @endif
+                    </td>
+                    <td>
+                        <p style="font-weight:600; color:var(--dark); margin:0">{{ $product->name }}</p>
+                        @if($product->description)
+                            <p style="font-size:11px; color:var(--muted); margin:2px 0 0; max-width:220px;
+                                      overflow:hidden; text-overflow:ellipsis; white-space:nowrap">
+                                {{ $product->description }}
+                            </p>
+                        @endif
+                    </td>
+                    <td style="color:var(--muted)">{{ $product->category?->name ?? '—' }}</td>
+                    <td>
+                        <p style="font-weight:600; margin:0">₹{{ number_format($product->price, 2) }}</p>
+                        @if($product->bulk_price)
+                            <p style="font-size:11px; color:var(--muted); margin:2px 0 0">
+                                Bulk: ₹{{ number_format($product->bulk_price, 2) }}
+                            </p>
+                        @endif
+                    </td>
+                    <td style="color:var(--muted)">{{ $product->stock }} {{ $product->unit }}</td>
+                    <td>
+                        @if($product->is_active)
+                            <span class="a-pill a-pill-good">Active</span>
+                        @else
+                            <span class="a-pill" style="background:var(--bg); color:var(--muted)">Inactive</span>
+                        @endif
+                    </td>
+                    <td class="right" style="white-space:nowrap">
+                        <a href="{{ route('admin.products.edit', $product) }}"
+                           class="a-btn a-btn-ghost" style="font-size:0.8rem; padding:0.3rem 0.75rem">
+                            <i class="ti ti-pencil"></i> Edit
+                        </a>
+                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST"
+                              class="inline" onsubmit="return confirm('Delete {{ $product->name }}?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="a-btn a-btn-danger" style="font-size:0.8rem; padding:0.3rem 0.75rem">
+                                <i class="ti ti-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7">
+                        <div class="a-empty">
+                            <i class="ti ti-plant-off" style="font-size:2rem; margin-bottom:0.5rem; display:block"></i>
+                            No products yet.
                         </div>
-                    @endif
-                </td>
-                <td class="px-4 py-3">
-                    <p class="font-medium text-gray-800">{{ $product->name }}</p>
-                    @if($product->description)
-                        <p class="text-xs text-gray-400 truncate max-w-xs">{{ $product->description }}</p>
-                    @endif
-                </td>
-                <td class="px-4 py-3 text-gray-600">
-                    {{ $product->category?->name ?? '—' }}
-                </td>
-                <td class="px-4 py-3">
-                    <p class="font-medium text-gray-800">₹{{ number_format($product->price, 2) }}</p>
-                    @if($product->bulk_price)
-                        <p class="text-xs text-gray-400">Bulk: ₹{{ number_format($product->bulk_price, 2) }}</p>
-                    @endif
-                </td>
-                <td class="px-4 py-3 text-gray-600">{{ $product->stock }} {{ $product->unit }}</td>
-                <td class="px-4 py-3">
-                    @if($product->is_active)
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Active</span>
-                    @else
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">Inactive</span>
-                    @endif
-                </td>
-                <td class="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                    <a href="{{ route('admin.products.edit', $product) }}"
-                       class="text-green-600 hover:text-green-800 font-medium">Edit</a>
-                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline"
-                          onsubmit="return confirm('Delete {{ $product->name }}?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-500 hover:text-red-700 font-medium">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="7" class="text-center text-gray-400 py-12">No products yet.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
+
 @endsection

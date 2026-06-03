@@ -4,114 +4,106 @@
 
 @section('content')
 
-@php
-    $statusColours = [
-        'pending'   => 'bg-yellow-100 text-yellow-700',
-        'confirmed' => 'bg-blue-100 text-blue-700',
-        'picking'   => 'bg-purple-100 text-purple-700',
-        'packed'    => 'bg-indigo-100 text-indigo-700',
-        'delivered' => 'bg-green-100 text-green-700',
-        'cancelled' => 'bg-red-100 text-red-700',
-    ];
-@endphp
-
-<div class="mb-6">
-    <a href="{{ route('admin.orders.index') }}" class="text-green-600 hover:text-green-800 text-sm">← Back to Orders</a>
-    <div class="flex items-center gap-3 mt-1">
-    <h1 class="text-2xl font-bold text-gray-800">
-        Order #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
-    </h1>
-        <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusColours[$order->status] }}">
-            {{ ucfirst($order->status) }}
-        </span>
+<div class="a-page-head">
+    <div>
+        <a href="{{ route('admin.orders.index') }}"
+           style="font-size:12px; color:var(--muted); text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px">
+            <i class="ti ti-arrow-left"></i> Back to Orders
+        </a>
+        <div style="display:flex; align-items:center; gap:10px">
+            <h1 class="a-page-title">Order #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}</h1>
+            <span class="a-badge a-badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
+        </div>
+        <p class="a-page-sub">Placed {{ $order->created_at->diffForHumans() }}</p>
     </div>
-    <p class="text-sm text-gray-400 mt-0.5">Placed {{ $order->created_at->diffForHumans() }}</p>
 </div>
 
-@if(session('success'))
-    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
-        {{ session('success') }}
-    </div>
-@endif
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div style="display:grid; grid-template-columns: 1fr 320px; gap:1.25rem; align-items:start">
 
     {{-- Order Items --}}
-    <div class="lg:col-span-2 space-y-4">
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100">
-                <h2 class="font-semibold text-gray-700">Items</h2>
-            </div>
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 border-b border-gray-100">
+    <div class="a-card">
+        <div class="a-card-head">
+            <span class="a-card-title"><i class="ti ti-list"></i> Items</span>
+        </div>
+        <div class="a-card-body" style="padding:0">
+            <table class="a-table">
+                <thead>
                     <tr>
-                        <th class="text-left px-6 py-3 font-medium text-gray-500">Product</th>
-                        <th class="text-right px-6 py-3 font-medium text-gray-500">Unit Price</th>
-                        <th class="text-right px-6 py-3 font-medium text-gray-500">Qty</th>
-                        <th class="text-right px-6 py-3 font-medium text-gray-500">Subtotal</th>
+                        <th>Product</th>
+                        <th class="right">Unit Price</th>
+                        <th class="right">Qty</th>
+                        <th class="right">Subtotal</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody>
                     @foreach($order->items as $item)
                     <tr>
-                        <td class="px-6 py-3 font-medium text-gray-800">{{ $item->product->name }}</td>
-                        <td class="px-6 py-3 text-right text-gray-600">₹{{ number_format($item->unit_price, 2) }}</td>
-                        <td class="px-6 py-3 text-right text-gray-600">{{ $item->quantity }}</td>
-                        <td class="px-6 py-3 text-right font-medium text-gray-800">
-                            ₹{{ number_format($item->unit_price * $item->quantity, 2) }}
-                        </td>
+                        <td style="font-weight:600">{{ $item->product->name }}</td>
+                        <td class="right" style="color:var(--muted)">₹{{ number_format($item->unit_price, 2) }}</td>
+                        <td class="right" style="color:var(--muted)">{{ $item->quantity }}</td>
+                        <td class="right" style="font-weight:600">₹{{ number_format($item->unit_price * $item->quantity, 2) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
-                <tfoot class="border-t-2 border-gray-200">
+                <tfoot>
                     <tr>
-                        <td colspan="3" class="px-6 py-3 text-right font-semibold text-gray-700">Total</td>
-                        <td class="px-6 py-3 text-right font-bold text-gray-900">₹{{ number_format($order->total, 2) }}</td>
+                        <td colspan="3" style="text-align:right; font-weight:700; color:var(--dark)">Total</td>
+                        <td style="text-align:right; font-weight:800; color:var(--dark)">₹{{ number_format($order->total, 2) }}</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 
-    {{-- Sidebar: Customer + Status --}}
-    <div class="space-y-4">
+    {{-- Sidebar --}}
+    <div style="display:flex; flex-direction:column; gap:1.25rem">
 
-        {{-- Customer info --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h2 class="font-semibold text-gray-700 mb-3">Customer</h2>
-            <p class="text-sm font-medium text-gray-800">{{ $order->user->name }}</p>
-            <p class="text-sm text-gray-500">{{ $order->user->email }}</p>
-            <div class="mt-3 pt-3 border-t border-gray-100">
-                <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Delivery Address</p>
-                <p class="text-sm text-gray-700">{{ $order->delivery_address }}</p>
+        {{-- Customer --}}
+        <div class="a-card">
+            <div class="a-card-head">
+                <span class="a-card-title"><i class="ti ti-user"></i> Customer</span>
             </div>
-            @if($order->notes)
-            <div class="mt-3 pt-3 border-t border-gray-100">
-                <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Notes</p>
-                <p class="text-sm text-gray-700">{{ $order->notes }}</p>
+            <div class="a-card-body">
+                <p style="font-weight:600; color:var(--dark); margin:0">{{ $order->user->name }}</p>
+                <p style="font-size:12px; color:var(--muted); margin:2px 0 0">{{ $order->user->email }}</p>
+
+                <hr class="a-divider">
+
+                <p class="a-label">Delivery Address</p>
+                <p style="font-size:13px; color:var(--dark); margin:0">{{ $order->delivery_address }}</p>
+
+                @if($order->notes)
+                    <hr class="a-divider">
+                    <p class="a-label">Notes</p>
+                    <p style="font-size:13px; color:var(--dark); margin:0">{{ $order->notes }}</p>
+                @endif
             </div>
-            @endif
         </div>
 
         {{-- Update Status --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h2 class="font-semibold text-gray-700 mb-3">Update Status</h2>
-            <form action="{{ route('admin.orders.update', $order) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <select name="status"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    @foreach(['pending', 'confirmed', 'picking', 'packed', 'delivered', 'cancelled'] as $status)
-                        <option value="{{ $status }}" {{ $order->status === $status ? 'selected' : '' }}>
-                            {{ ucfirst($status) }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit"
-                        class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">
-                    Save Status
-                </button>
-            </form>
+        <div class="a-card">
+            <div class="a-card-head">
+                <span class="a-card-title"><i class="ti ti-refresh"></i> Update Status</span>
+            </div>
+            <div class="a-card-body">
+                <form action="{{ route('admin.orders.update', $order) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="a-form-group">
+                        <label class="a-label">Status</label>
+                        <select name="status" class="a-input">
+                            @foreach(['pending', 'confirmed', 'picking', 'packed', 'delivered', 'cancelled'] as $status)
+                                <option value="{{ $status }}" {{ $order->status === $status ? 'selected' : '' }}>
+                                    {{ ucfirst($status) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="a-btn a-btn-primary" style="width:100%; justify-content:center">
+                        <i class="ti ti-device-floppy"></i> Save Status
+                    </button>
+                </form>
+            </div>
         </div>
 
     </div>

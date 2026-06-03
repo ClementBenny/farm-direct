@@ -4,31 +4,40 @@
 
 @section('content')
 
-<div class="mb-6">
-    <a href="{{ route('admin.categories.index') }}" class="text-green-600 hover:text-green-800 text-sm">← Back to Categories</a>
-    <h1 class="text-2xl font-bold text-gray-800 mt-1">Add Category</h1>
+<div class="a-page-head">
+    <div>
+        <a href="{{ route('admin.categories.index') }}"
+           style="font-size:12px; color:var(--muted); text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px">
+            <i class="ti ti-arrow-left"></i> Back to Categories
+        </a>
+        <h1 class="a-page-title">Add Category</h1>
+    </div>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 max-w-md p-6">
-    <form action="{{ route('admin.categories.store') }}" method="POST" novalidate>
-        @csrf
+<div class="a-card" style="max-width:480px">
+    <div class="a-card-head">
+        <span class="a-card-title"><i class="ti ti-tag-plus"></i> New Category</span>
+    </div>
+    <div class="a-card-body">
+        <form action="{{ route('admin.categories.store') }}" method="POST" novalidate>
+            @csrf
 
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input type="text" name="name" value="{{ old('name') }}" autofocus
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 @error('name') border-red-400 @enderror"
-                   placeholder="e.g. Vegetables">
-            @error('name')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-            <p class="text-xs text-gray-400 mt-1">The slug will be generated automatically.</p>
-        </div>
+            <div class="a-form-group">
+                <label class="a-label">Name</label>
+                <input type="text" name="name" value="{{ old('name') }}" autofocus
+                       class="a-input @error('name') border-red-400 @enderror"
+                       placeholder="e.g. Vegetables">
+                @error('name')
+                    <p style="color:#dc2626; font-size:11px; margin-top:4px">{{ $message }}</p>
+                @enderror
+                <p style="font-size:11px; color:var(--muted); margin-top:4px">The slug will be generated automatically.</p>
+            </div>
 
-        <button type="submit"
-                class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors">
-            Create Category
-        </button>
-    </form>
+            <button type="submit" class="a-btn a-btn-primary" style="width:100%; justify-content:center">
+                <i class="ti ti-plus"></i> Create Category
+            </button>
+        </form>
+    </div>
 </div>
 
 @endsection
