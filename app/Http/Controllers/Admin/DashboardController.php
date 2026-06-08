@@ -12,7 +12,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalUsers    = User::count();
+        
+        $totalUsers = User::whereIn('role', ['customer', 'shop'])->count();
         $totalProducts = Product::count();
         $totalOrders   = Order::count();
         $pendingOrders = Order::where('status', 'pending')->count();

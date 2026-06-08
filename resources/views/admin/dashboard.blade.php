@@ -15,7 +15,7 @@
 <div class="a-stat-grid">
     <div class="a-stat">
         <div>
-            <div class="a-stat-label">Total Users</div>
+            <div class="a-stat-label">Total Customers</div>
             <div class="a-stat-num">{{ number_format($totalUsers) }}</div>
         </div>
         <div class="a-stat-icon"><i class="ti ti-user"></i></div>
@@ -157,7 +157,7 @@
             @foreach($recentOrders as $order)
             <tr style="cursor:pointer;" onclick="window.location='{{ route('admin.orders.show', $order) }}'">
                 <td style="font-weight:700; font-family:monospace; font-size:13px; color:var(--dark);">
-                    #{{ strtoupper(substr(md5($order->id . $order->created_at), 0, 8)) }}
+                    #00{{ $order->id  }}
                 </td>
                 <td>
                     <div style="font-weight:600; font-size:13px; color:var(--dark);">{{ $order->user->name ?? 'Unknown' }}</div>
