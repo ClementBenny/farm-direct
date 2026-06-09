@@ -64,12 +64,20 @@
     <div class="a-card" style="margin-bottom:0">
         <div class="a-card-head"><span class="a-card-title">Users by Role</span></div>
         <div class="a-card-body">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                @foreach(['admin', 'customer', 'shop', 'staff'] as $role)
+            @php
+                $roles = ['customer'=>['ti-user','Customers'],'shop'=>['ti-building-store','Wholesale'],'staff'=>['ti-tools','Staff'],'admin'=>['ti-shield','Admins']];
+                $total = max(1, array_sum($usersByRole->toArray()));
+            @endphp
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                @foreach($roles as $role => [$icon, $label])
                 @php $count = $usersByRole[$role] ?? 0; @endphp
-                <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
-                    <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:capitalize; margin-bottom:6px;">{{ ucfirst($role) }}</div>
-                    <div style="font-size:1.6rem; font-weight:800; color:var(--dark); line-height:1;">{{ $count }}</div>
+                <div style="display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.75rem; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
+                    <i class="ti {{ $icon }}" style="font-size:15px; color:var(--muted); width:16px; text-align:center; flex-shrink:0;"></i>
+                    <span style="font-size:12px; font-weight:600; color:var(--dark); width:72px; flex-shrink:0;">{{ $label }}</span>
+                    <div style="flex:1; height:5px; background:var(--border); border-radius:99px; overflow:hidden;">
+                        <div style="height:100%; width:{{ round(($count/$total)*100) }}%; background:var(--accent); border-radius:99px;"></div>
+                    </div>
+                    <span style="font-size:13px; font-weight:800; color:var(--dark); min-width:24px; text-align:right;">{{ $count }}</span>
                 </div>
                 @endforeach
             </div>

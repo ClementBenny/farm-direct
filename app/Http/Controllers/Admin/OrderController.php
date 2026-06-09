@@ -4,18 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('user')
-                       ->orderByDesc('created_at')
-                       ->get();
+        $users = User::whereIn('role', ['customer', 'shop'])->orderBy('name')->get();
 
-        return view('admin.orders.index', compact('orders'));
+        $orders = Order::with('user')
+            ->when($request->user_id, fn($q) => $q->where('user_id', $request->user_id))
+            ->when($request->status,  fn($q) => $q->where('status', $request->status))
+            ->latest()
+            ->get();
+
+        return view('admin.orders.index', compact('orders', 'users'));
     }
 
     public function show(Order $order)
