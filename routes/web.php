@@ -11,12 +11,30 @@ use App\Http\Controllers\Customer\ShopController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Wholesale;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/produce', [App\Http\Controllers\LandingController::class, 'produce'])->name('produce');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/dashboard', function () {
+    $user = Auth::user();
+    switch ($user->role) {
+        case 'admin':
+            return view('dashboard.admin');
+        case 'staff':
+            return view('dashboard.staff');
+        case 'customer':
+            return view('landing');
+        case 'shop':
+            return view('landing');
+        default:
+            return view('landing'); 
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

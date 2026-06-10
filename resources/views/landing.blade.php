@@ -91,17 +91,22 @@
             <p>Spinach, amaranth, curry leaves — harvested at dawn, packed by noon</p>
         </div>
         <div class="produce-card">
-            <div class="produce-icon">🫚</div>
+            <div class="produce-icon"><i class="ph-duotone ph-carrot"></i></div>
             <h3>Root Vegetables</h3>
             <p>Tapioca, yam, sweet potato — straight from Kerala soil</p>
         </div>
+            <div class="produce-card">
+            <div class="produce-icon"><i class="ph-duotone ph-jar-label"></i></div>
+            <h3>Farm Condiments</h3>
+            <p>Honey, Pickles and other condiments — straight from Kerala soil</p>
+        </div>
         <div class="produce-card">
-            <div class="produce-icon">🍌</div>
+            <div class="produce-icon"><i class="ph-duotone ph-cherries"></i></div>
             <h3>Tropical Fruits</h3>
             <p>Banana, papaya, jackfruit — naturally ripened</p>
         </div>
         <div class="produce-card produce-card--tall">
-            <div class="produce-icon">🌿</div>
+            <div class="produce-icon"><i class="ph-duotone ph-clover"></i></div>
             <h3>Herbs & Spices</h3>
             <p>Ginger, turmeric, lemongrass — the backbone of Kerala cooking</p>
         </div>

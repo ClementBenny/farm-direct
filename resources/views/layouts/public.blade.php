@@ -480,9 +480,9 @@
         @auth
             @php $role = auth()->user()->role ?? 'customer'; @endphp
             <div class="nav-divider"></div>
-
+            
             @if($role === 'shop')
-                <span class="nav-role-pill nav-role-pill--wholesale">Wholesale</span>
+                <span class="nav-role-pill nav-role-pill--wholesale">Wholesaler</span>
                 <a href="{{ route('wholesale.index') }}" class="nav-link">Shop</a>
                 <a href="{{ route('wholesale.cart') }}"  class="nav-link nav-link-cart">
                     Cart
