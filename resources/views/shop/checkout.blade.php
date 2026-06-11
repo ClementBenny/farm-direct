@@ -3,113 +3,137 @@
 @section('title', 'Checkout')
 
 @section('content')
-<style>
-    :root {
-        --ivory:     #FFFBF0;
-        --champagne: #F7E7CE;
-        --mauve:     #C4A484;
-        --olive:     #808000;
-        --umber:     #4B3621;
-    }
-    body {
-        background-color: var(--ivory);
-        font-family: 'Inter', sans-serif;
-    }
-    .custom-shadow {
-        box-shadow: 0 10px 30px -12px rgba(75, 54, 33, 0.15);
-    }
-</style>
+<div class="page-wrap" style="max-width:1000px;">
 
-<div class="min-h-screen pt-32 pb-20 px-6">
-    <div class="max-w-6xl mx-auto">
+    <h1 class="page-heading">Checkout</h1>
+    <p class="page-sub">Review your order and confirm delivery details</p>
 
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl font-serif font-bold italic" style="color: var(--umber);">Checkout</h1>
-            <div class="w-20 h-1 mx-auto mt-4 rounded-full" style="background-color: var(--mauve);"></div>
-        </header>
+    <div style="display:grid; grid-template-columns:1fr 1.4fr; gap:2rem; align-items:start;">
 
-        <div class="flex flex-col lg:flex-row gap-10">
-
-            {{-- LEFT SIDE: Order Summary (The Bill) --}}
-            <div class="w-full lg:w-5/12 order-2 lg:order-1">
-                <div class="rounded-[2.5rem] p-8 custom-shadow border sticky top-32"
-                     style="background-color: var(--champagne); border-color: var(--mauve);">
-
-                    <h2 class="text-xl font-serif font-bold mb-6" style="color: var(--umber);">Your Bill</h2>
-
-                    <div class="space-y-4 border-b pb-6" style="border-color: rgba(75, 54, 33, 0.1);">
-                        @foreach ($cart as $productId => $quantity)
-                            @if ($products->has($productId))
-                                @php $product = $products[$productId]; @endphp
-                                <div class="flex justify-between items-center text-sm">
-                                    <div class="flex-1">
-                                        <p class="font-semibold" style="color: var(--umber);">{{ $product->name }}</p>
-                                        <p class="text-xs opacity-60 italic">x{{ $quantity }}</p>
-                                    </div>
-                                    <p class="font-bold" style="color: var(--umber);">₹{{ number_format($product->price * $quantity, 2) }}</p>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-
-                    <div class="mt-6">
-                        <div class="flex justify-between items-end">
-                            <span class="text-sm uppercase tracking-widest opacity-70" style="color: var(--umber);">Total</span>
-                            <span class="text-3xl font-serif font-bold" style="color: var(--olive);">₹{{ number_format($total, 2) }}</span>
+        {{-- ORDER SUMMARY --}}
+        <div class="fd-card fd-card--flush" style="position:sticky; top:100px;">
+            <div style="padding:32px 36px; border-bottom:1px solid rgba(75,54,33,0.12);">
+                <div class="fd-card-label"><i class="ph ph-receipt"></i> Your Bill</div>
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                    @foreach($cart as $productId => $quantity)
+                        @if($products->has($productId))
+                        @php $product = $products[$productId]; @endphp
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                            <div>
+                                <p style="font-size:14px; font-weight:500; color:var(--umber);">{{ $product->name }}</p>
+                                <p style="font-size:12px; color:var(--mauve);">× {{ $quantity }}</p>
+                            </div>
+                            <p style="font-size:14px; font-weight:600; color:var(--umber); white-space:nowrap;">₹{{ number_format($product->price * $quantity, 2) }}</p>
                         </div>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-dashed opacity-30 flex justify-center" style="border-color: var(--umber);">
-                        <span class="text-[10px] uppercase tracking-[0.3em]">Thank you for your order</span>
-                    </div>
+                        @endif
+                    @endforeach
                 </div>
             </div>
-
-            {{-- RIGHT SIDE: Delivery Details --}}
-            <div class="w-full lg:w-7/12 order-1 lg:order-2">
-                <div class="bg-white rounded-[2.5rem] p-8 md:p-10 custom-shadow border"
-                     style="border-color: var(--mauve);">
-
-                    <h2 class="text-xl font-serif font-bold mb-8" style="color: var(--umber);">Delivery Details</h2>
-
-                    <form method="POST" action="{{ route('shop.checkout.store') }}">
-                        @csrf
-
-                        <div class="mb-6">
-                            <label class="block text-xs uppercase tracking-widest font-bold mb-3" style="color: var(--mauve);" for="delivery_address">
-                                Shipping Address
-                            </label>
-                            <textarea id="delivery_address" name="delivery_address" rows="4"
-                                      style="border-color: var(--champagne); background-color: var(--ivory);"
-                                      placeholder="Your full delivery address"
-                                      class="w-full rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#808000] border-2 transition-all @error('delivery_address') border-red-400 @enderror">{{ old('delivery_address') }}</textarea>
-                            @error('delivery_address')
-                                <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="mb-10">
-                            <label class="block text-xs uppercase tracking-widest font-bold mb-3" style="color: var(--mauve);" for="notes">
-                                Order Notes <span class="opacity-50 italic">(Optional)</span>
-                            </label>
-                            <textarea id="notes" name="notes" rows="2"
-                                      style="border-color: var(--champagne); background-color: var(--ivory);"
-                                      class="w-full rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#808000] border-2 transition-all">{{ old('notes') }}</textarea>
-                        </div>
-
-                        <button type="submit"
-                                style="background-color: var(--umber);"
-                                class="w-full hover:bg-[#362618] text-white font-bold py-5 rounded-2xl transition-all duration-300 shadow-xl uppercase tracking-widest text-xs flex items-center justify-center gap-2">
-                            Place Order
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
+            <div style="padding:24px 36px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--olive);">Total</span>
+                <span style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--umber);">₹{{ number_format($total, 2) }}</span>
             </div>
-
         </div>
+
+        {{-- DELIVERY DETAILS --}}
+        <div>
+            <form method="POST" action="{{ route('shop.checkout.store') }}">
+                @csrf
+
+                {{-- Saved addresses --}}
+                @if($addresses->isNotEmpty())
+                <div class="fd-card" style="margin-bottom:1.25rem;">
+                    <div class="fd-card-label"><i class="ph ph-map-pin"></i> Saved Addresses</div>
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                        @foreach($addresses as $address)
+                        <label style="cursor:pointer;">
+                            <input type="radio" name="address_id" value="{{ $address->id }}"
+                                {{ ($address->is_default || old('address_id') == $address->id) && old('address_id') !== 'manual' ? 'checked' : '' }}
+                                style="display:none;" class="addr-radio">
+                            <div class="addr-card" style="padding:16px 20px; border:1.5px solid rgba(75,54,33,0.15); border-radius:12px; background:var(--ivory); transition:border-color 0.2s;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                    <span style="font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--umber);">{{ $address->label }}</span>
+                                    @if($address->is_default)
+                                        <span class="status-badge status-confirmed" style="font-size:10px; padding:2px 10px;">Default</span>
+                                    @endif
+                                </div>
+                                <p style="font-size:14px; color:var(--umber); opacity:0.75; line-height:1.6;">
+                                    {{ $address->address_line }}, {{ $address->city }}, {{ $address->state }} — {{ $address->pincode }}
+                                </p>
+                            </div>
+                        </label>
+                        @endforeach
+
+                        {{-- Manual entry option --}}
+                        <label style="cursor:pointer;">
+                            <input type="radio" name="address_id" value="manual"
+                                {{ old('address_id') === 'manual' ? 'checked' : '' }}
+                                style="display:none;" class="addr-radio" id="radio-manual">
+                            <div class="addr-card" style="padding:16px 20px; border:1.5px solid rgba(75,54,33,0.15); border-radius:12px; background:var(--ivory); transition:border-color 0.2s;">
+                                <span style="font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--mauve);">
+                                    <i class="ph ph-plus"></i> Enter a different address
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+
+                    {{-- Manual address textarea (shown only when manual is selected) --}}
+                    <div id="manual-address-wrap" style="display:{{ old('address_id') === 'manual' ? 'block' : 'none' }}">
+                        <label style="font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--olive); display:block; margin-bottom:8px;">Delivery Address</label>
+                        <textarea name="delivery_address" rows="3" placeholder="House no, Street, City, Pincode"
+                            style="width:100%; padding:0.7rem 1rem; font-family:'Jost',sans-serif; font-size:14px; color:var(--umber); background:var(--ivory); border:1.5px solid rgba(75,54,33,0.18); border-radius:10px; outline:none; resize:none;">{{ old('delivery_address') }}</textarea>
+                        @error('delivery_address') <p style="font-size:12px; color:#8c2828; margin-top:4px;">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                @else
+                {{-- No saved addresses — plain textarea --}}
+                <div class="fd-card" style="margin-bottom:1.25rem;">
+                    <div class="fd-card-label"><i class="ph ph-map-pin"></i> Delivery Address</div>
+                    <textarea name="delivery_address" rows="3" placeholder="House no, Street, City, Pincode"
+                        style="width:100%; padding:0.7rem 1rem; font-family:'Jost',sans-serif; font-size:14px; color:var(--umber); background:var(--ivory); border:1.5px solid rgba(75,54,33,0.18); border-radius:10px; outline:none; resize:none;">{{ old('delivery_address') }}</textarea>
+                    @error('delivery_address') <p style="font-size:12px; color:#8c2828; margin-top:4px;">{{ $message }}</p> @enderror
+                </div>
+                @endif
+
+                {{-- Notes --}}
+                <div class="fd-card" style="margin-bottom:1.25rem;">
+                    <div class="fd-card-label"><i class="ph ph-note"></i> Order Notes <span style="text-transform:none; letter-spacing:0; font-size:11px; color:var(--mauve);">(optional)</span></div>
+                    <textarea name="notes" rows="2" placeholder="Add Delivery instructions."
+                        style="width:100%; padding:0.7rem 1rem; font-family:'Jost',sans-serif; font-size:14px; color:var(--umber); background:var(--ivory); border:1.5px solid rgba(75,54,33,0.18); border-radius:10px; outline:none; resize:none;">{{ old('notes') }}</textarea>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width:100%; text-align:center; padding:16px;">
+                    Place Order
+                </button>
+            </form>
+        </div>
+
     </div>
 </div>
+
+@push('scripts')
+<script>
+    const radios   = document.querySelectorAll('.addr-radio');
+    const cards    = document.querySelectorAll('.addr-card');
+    const manualWrap = document.getElementById('manual-address-wrap');
+
+    function updateCards() {
+        radios.forEach((radio, i) => {
+            cards[i].style.borderColor = radio.checked
+                ? 'var(--umber)'
+                : 'rgba(75,54,33,0.15)';
+            cards[i].style.background = radio.checked
+                ? 'var(--champagne)'
+                : 'var(--ivory)';
+        });
+        const manualRadio = document.getElementById('radio-manual');
+        manualWrap.style.display = manualRadio?.checked ? 'block' : 'none';
+    }
+
+    radios.forEach(r => r.addEventListener('change', updateCards));
+    updateCards();
+</script>
+@endpush
+
 @endsection

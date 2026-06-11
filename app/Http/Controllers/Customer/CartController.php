@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    // The cart is stored in the session as an array:
-    // ['cart' => [ product_id => quantity, ... ]]
-
     public function index()
     {
         $cart     = session('cart', []);
@@ -82,10 +79,11 @@ class CartController extends Controller
                 ->with('error', 'Your cart is empty.');
         }
 
-        $products = Product::whereIn('id', array_keys($cart))->get();
-        $total    = $products->sum(fn($p) => $p->price * $cart[$p->id]);
+        $products  = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
+        $total     = collect($cart)->reduce(fn($carry, $qty, $id) => $carry + ($products[$id]->price * $qty), 0);
+        $addresses = auth()->user()->addresses()->orderByDesc('is_default')->get();
 
-        return view('shop.checkout', compact('cart', 'products', 'total'));
+        return view('shop.checkout', compact('cart', 'products', 'total', 'addresses'));
     }
 
     public function placeOrder(Request $request)
@@ -96,24 +94,29 @@ class CartController extends Controller
             return redirect()->route('shop.index');
         }
 
-        $validated = $request->validate([
-            'delivery_address' => ['required', 'string', 'max:500'],
+        $request->validate([
+            'address_id'       => ['required'],
+            'delivery_address' => ['required_if:address_id,manual', 'nullable', 'string', 'max:500'],
             'notes'            => ['nullable', 'string', 'max:500'],
         ]);
 
+        if ($request->address_id === 'manual') {
+            $deliveryAddress = $request->delivery_address;
+        } else {
+            $address         = auth()->user()->addresses()->findOrFail($request->address_id);
+            $deliveryAddress = "{$address->address_line}, {$address->city}, {$address->state} — {$address->pincode}";
+        }
+
         $products = Product::whereIn('id', array_keys($cart))->get();
 
-        // Create the order
         $order = Order::create([
             'user_id'          => auth()->id(),
             'status'           => 'pending',
             'total'            => 0,
-            'delivery_address' => $validated['delivery_address'],
-            'notes'            => $validated['notes'] ?? null,
+            'delivery_address' => $deliveryAddress,
+            'notes'            => $request->notes ?? null,
         ]);
 
-        
-        // Create each line item and accumulate total
         $total = 0;
         foreach ($products as $product) {
             $qty = $cart[$product->id];
@@ -128,7 +131,6 @@ class CartController extends Controller
 
         $order->update(['total' => $total]);
 
-        // Clear the cart
         session()->forget('cart');
 
         return redirect()->route('shop.orders')

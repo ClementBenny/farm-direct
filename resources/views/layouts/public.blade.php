@@ -504,6 +504,7 @@
                     @endif
                 </a>
                 <a href="{{ route('shop.orders') }}" class="nav-link">Orders</a>
+                <a href="{{ route('shop.profile.index') }}" class="nav-link">Profile</a>
             @endif
 
             <div class="nav-divider"></div>
@@ -540,6 +541,7 @@
             <a href="{{ route('shop.index') }}"  class="nav-link">Shop</a>
             <a href="{{ route('shop.cart') }}"   class="nav-link">Cart</a>
             <a href="{{ route('shop.orders') }}" class="nav-link">Orders</a>
+            <a href="{{ route('shop.profile.index') }}" class="nav-link">Profile</a>
         @endif
 
         <form method="POST" action="{{ route('logout') }}" style="margin:0">

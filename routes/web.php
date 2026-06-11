@@ -12,6 +12,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Wholesale;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -67,6 +68,16 @@ Route::middleware(['auth', 'role:customer', 'no.back'])->prefix('shop')->name('s
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [CartController::class, 'placeOrder'])->name('checkout.store');
+
+    // Profile
+    Route::prefix('profile')->name('profile.')->controller(\App\Http\Controllers\Customer\ProfileController::class)->group(function () {
+    Route::get('/',                                'index')->name('index');
+    Route::post('/info',                           'updateInfo')->name('info');
+    Route::post('/password',                       'updatePassword')->name('password');
+    Route::post('/addresses',                      'storeAddress')->name('addresses.store');
+    Route::post('/addresses/{address}/default',    'setDefault')->name('addresses.default');
+    Route::delete('/addresses/{address}',          'destroyAddress')->name('addresses.destroy');
+    });
 });
 
 // Wholesale (Shop role)

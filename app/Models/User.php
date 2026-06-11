@@ -30,4 +30,8 @@ class User extends Authenticatable
     public function isShop(): bool     { return $this->role === 'shop'; }
     public function isStaff(): bool    { return $this->role === 'staff'; }
     public function orders() { return $this->hasMany(Order::class); }
+    
+    public function addresses(){return $this->hasMany(Address::class);}
+    public function defaultAddress(){return $this->hasOne(Address::class)->where('is_default', true);}
+
 }
