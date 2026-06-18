@@ -67,7 +67,9 @@ class StaffController extends Controller
 
     public function show(Order $order)
     {
-        $order->load('items.product', 'user');
+        // Added 'updatedByStaff' here to eager load the relationship smoothly for your view
+        $order->load('items.product', 'user', 'updatedByStaff');
+        
         return view('staff.orders-show', compact('order'));
     }
 
@@ -79,7 +81,11 @@ class StaffController extends Controller
             ])],
         ]);
 
-        $order->update($validated);
+        // Updated array to save the status along with the currently logged-in staff user's ID
+        $order->update([
+            'status' => $validated['status'],
+            'updated_by_staff_id' => auth()->id(), 
+        ]);
 
         return redirect()->route('staff.orders.show', $order)
             ->with('success', 'Order marked as ' . ucfirst($validated['status']) . '.');

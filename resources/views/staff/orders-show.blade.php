@@ -26,22 +26,8 @@ $nextLabels = [
 ];
 @endphp
 
-@if(session('success'))
-<div x-data="{ show: true }"
-     x-show="show"
-     x-init="setTimeout(() => show = false, 3000)"
-     x-transition:leave="transition ease-in duration-300"
-     x-transition:leave-start="opacity-100"
-     x-transition:leave-end="opacity-0"
-     style="background:rgba(128,128,0,0.1);border:1px solid rgba(128,128,0,0.25);color:var(--umber);
-            padding:12px 18px;border-radius:10px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-size:13px;font-weight:600;">
-        <i class="ti ti-circle-check" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:6px;color:var(--olive);"></i>
-        {{ session('success') }}
-    </span>
-    <button @click="show = false" style="background:none;border:none;cursor:pointer;color:var(--mauve);font-size:18px;padding:0;line-height:1;">×</button>
-</div>
-@endif
+
+
 
 {{-- Page header --}}
 <div style="margin-bottom:1.5rem;">
@@ -118,10 +104,19 @@ $nextLabels = [
             <div style="padding:16px 18px;">
                 <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mauve);margin-bottom:6px;font-weight:700;">Address</div>
                 <p style="font-size:13px;color:var(--umber);margin:0 0 14px;line-height:1.5;">{{ $order->delivery_address }}</p>
+                
                 @if($order->notes)
                 <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mauve);margin-bottom:6px;font-weight:700;">Notes</div>
-                <p style="font-size:13px;color:var(--umber);margin:0;padding:10px 14px;background:var(--ivory);border:1px solid rgba(196,164,132,0.25);border-radius:8px;line-height:1.5;">
+                <p style="font-size:13px;color:var(--umber);margin:0 0 14px;padding:10px 14px;background:var(--ivory);border:1px solid rgba(196,164,132,0.25);border-radius:8px;line-height:1.5;">
                     {{ $order->notes }}
+                </p>
+                @endif
+
+                {{-- New "Last Updated By" Field --}}
+                @if($order->updatedByStaff)
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mauve);margin-bottom:4px;font-weight:700;">Last Handled By</div>
+                <p style="font-size:12px;color:var(--olive);margin:0;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
+                    <i class="ti ti-user-check" style="font-size:14px;"></i> {{ $order->updatedByStaff->name }}
                 </p>
                 @endif
             </div>

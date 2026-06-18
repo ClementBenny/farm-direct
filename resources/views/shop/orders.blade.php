@@ -73,7 +73,7 @@
         <div class="fd-card">
             <div class="order-card-top">
                 <div>
-                    <p class="order-ref">#{{ strtoupper(substr(md5($order->id . $order->created_at), 0, 8)) }}</p>
+                    <p class="order-ref">Order #{{ $order->customer_order_number }}</p>
                     <p class="order-meta">
                         {{ $order->created_at->format('d M Y') }} &nbsp;·&nbsp; ₹{{ number_format($order->total, 2) }}
                     </p>

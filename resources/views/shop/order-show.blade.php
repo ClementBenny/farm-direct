@@ -84,22 +84,22 @@
         <i class="ph ph-arrow-left"></i> My Orders
     </a>
 
-    <div class="detail-header">
-        <div>
-            <h1 class="detail-ref">#{{ strtoupper(substr(md5($order->id . $order->created_at), 0, 8)) }}</h1>
-            <p class="detail-placed">Placed {{ $order->created_at->diffForHumans() }} · {{ $order->created_at->format('d M Y') }}</p>
+        <div class="detail-header">
+            <div>
+                <h1 class="detail-ref">Order #{{ $order->customer_order_number }}</h1>
+                <p class="detail-placed">Placed {{ $order->created_at->diffForHumans() }} · {{ $order->created_at->format('d M Y') }}</p>
+            </div>
+            @if(!$cancelled && $currentIndex !== false && $currentIndex < 3)
+                <form action="{{ route('shop.orders.cancel', $order) }}" method="POST"
+                    onsubmit="return confirm('Are you sure you want to cancel this order?')">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="cancel-btn">
+                        <i class="ph ph-x-circle" style="margin-right:5px;"></i>Cancel Order
+                    </button>
+                </form>
+            @endif
         </div>
-        @if(!$cancelled && $currentIndex !== false && $currentIndex < 3)
-            <form action="{{ route('shop.orders.cancel', $order) }}" method="POST"
-                  onsubmit="return confirm('Are you sure you want to cancel this order?')">
-                @csrf
-                @method('PATCH')
-                <button type="submit" class="cancel-btn">
-                    <i class="ph ph-x-circle" style="margin-right:5px;"></i>Cancel Order
-                </button>
-            </form>
-        @endif
-    </div>
 
     {{-- Status --}}
     <div class="fd-card" style="margin-top:36px;">
