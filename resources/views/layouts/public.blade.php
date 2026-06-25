@@ -328,7 +328,17 @@
             padding: 120px 48px 80px; position: relative; overflow: hidden;
             background: var(--ivory);
         }
-        .hero-inner { position: relative; z-index: 2; max-width: 600px; }
+        .hero-inner { 
+            position: relative; 
+            z-index: 2; 
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 48px;
+        }
         .hero-tag {
             display: inline-block; font-size: 11px; letter-spacing: 0.15em;
             text-transform: uppercase; color: var(--olive);
@@ -341,7 +351,7 @@
         }
         .hero-sub {
             font-size: 16px; font-weight: 300; color: var(--mauve);
-            line-height: 1.7; max-width: 440px; margin-bottom: 40px;
+            line-height: 1.7; margin-bottom: 40px;
         }
         .hero-actions { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
         .hero-orb { position: absolute; border-radius: 50%; pointer-events: none; }
@@ -352,6 +362,41 @@
         .hero-orb-2 {
             width: 300px; height: 300px; right: 200px; top: 10%;
             background: radial-gradient(circle, rgba(196,164,132,0.15) 0%, transparent 70%);
+        }
+        .marquee-wrap { background: var(--umber); padding: 14px 0; overflow: hidden; }
+
+        .hero-text {
+            flex: 1;
+            max-width: 540px; 
+        }
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .hero-image img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        @media (max-width: 991px) {
+            .hero-inner {
+                flex-direction: column;
+                text-align: center;
+                justify-content: center;
+            }
+            .hero-text {
+                max-width: 100%;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-image {
+                justify-content: center;
+                margin-top: 40px;
+            }
         }
         .marquee-wrap { background: var(--umber); padding: 14px 0; overflow: hidden; }
         .marquee-track {

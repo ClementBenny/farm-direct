@@ -7,18 +7,28 @@
 {{-- HERO --}}
 <section class="hero">
     <div class="hero-inner">
-        <div class="hero-tag">Est. in the heart of Kerala</div>
-        <h1 class="hero-title">
-            From our soil<br>
-            <em>to your table</em>
-        </h1>
-        <p class="hero-sub">
-            Fresh produce grown without compromise. Order directly from the farm — no middlemen, no cold storage, no waiting.
-        </p>
-        <div class="hero-actions">
-            <a href="{{ route('login') }}" class="btn-primary">Order Fresh Produce</a>
-            <a href="#about" class="btn-ghost">Learn about the farm</a>
+        
+        {{-- Left Column: Text Content --}}
+        <div class="hero-text">
+            <div class="hero-tag">Est. in the heart of Kerala</div>
+            <h1 class="hero-title">
+                From our soil<br>
+                <em>to your table</em>
+            </h1>
+            <p class="hero-sub">
+                Fresh produce grown without compromise. Order directly from the farm — no middlemen, no cold storage, no waiting.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ route('login') }}" class="btn-primary">Order Fresh Produce</a>
+                <a href="#about" class="btn-ghost">Learn about the farm</a>
+            </div>
         </div>
+
+        {{-- Right Column: Truck Image --}}
+        <div class="hero-image">
+            <img src="{{ asset('storage/images/truck.png') }}" alt="Farm Direct Delivery Truck">
+        </div>
+
     </div>
     <div class="hero-orb hero-orb-1"></div>
     <div class="hero-orb hero-orb-2"></div>
