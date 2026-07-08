@@ -154,7 +154,7 @@
     <div style="max-width:900px; margin:0 auto;">
         <div class="section-label">What our customers say</div>
         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:48px; flex-wrap:wrap; gap:16px;">
-            <h2 class="section-title" style="margin-bottom:0;">Real stories, <em>real farms</em></h2>
+            <h2 class="section-title" style="margin-bottom:0;">Real stories, <em>real reviews</em></h2>
             <a href="{{ route('feedback') }}" class="btn-ghost">All reviews &rarr;</a>
         </div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
