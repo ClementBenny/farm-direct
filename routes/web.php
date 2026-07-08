@@ -13,10 +13,13 @@ use App\Http\Controllers\Wholesale;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\FeedbackController;
 
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/produce', [App\Http\Controllers\LandingController::class, 'produce'])->name('produce');
+Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback');
+Route::post('/feedback', [FeedbackController::class, 'store'])->middleware(['auth'])->name('feedback.store');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

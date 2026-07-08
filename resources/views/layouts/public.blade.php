@@ -615,6 +615,7 @@
     <div class="footer-links">
         <a href="#about">About</a>
         <a href="{{ route('produce') }}">Produce</a>
+        <a href="{{ route('feedback') }}">Reviews</a>
         @auth
             @if((auth()->user()->role ?? '') === 'shop')
                 <a href="{{ route('wholesale.index') }}">Wholesale</a>

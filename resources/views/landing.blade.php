@@ -147,6 +147,41 @@
     </div>
 </section>
 
+{{-- FEEDBACK STRIP --}}
+@php $landingFeedbacks = \App\Models\Feedback::with('user')->latest()->take(3)->get(); @endphp
+@if($landingFeedbacks->isNotEmpty())
+<section style="padding:100px 48px; background:var(--champagne);">
+    <div style="max-width:900px; margin:0 auto;">
+        <div class="section-label">What our customers say</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:48px; flex-wrap:wrap; gap:16px;">
+            <h2 class="section-title" style="margin-bottom:0;">Real stories, <em>real farms</em></h2>
+            <a href="{{ route('feedback') }}" class="btn-ghost">All reviews &rarr;</a>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+            @foreach($landingFeedbacks as $fb)
+            <div style="background:var(--ivory); border:1.5px solid rgba(75,54,33,0.12); border-radius:20px; padding:28px 28px 24px;">
+                <div style="display:flex; gap:3px; margin-bottom:14px;">
+                    @for($s = 1; $s <= 5; $s++)
+                        <i class="ph-fill ph-star" style="font-size:14px; color:{{ $s <= $fb->rating ? '#808000' : 'rgba(75,54,33,0.15)' }};"></i>
+                    @endfor
+                </div>
+                <p style="font-size:14px; color:var(--umber); line-height:1.7; margin-bottom:20px; opacity:0.85;">"{{ $fb->comment }}"</p>
+                <div style="display:flex; align-items:center; gap:10px; border-top:1px solid rgba(75,54,33,0.1); padding-top:16px;">
+                    <div style="width:32px; height:32px; border-radius:50%; background:var(--champagne); border:1.5px solid rgba(75,54,33,0.18); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--umber);">
+                        {{ strtoupper(substr($fb->user->name, 0, 2)) }}
+                    </div>
+                    <div>
+                        <p style="font-size:13px; font-weight:600; color:var(--umber); line-height:1;">{{ $fb->user->name }}</p>
+                        <p style="font-size:11px; color:var(--mauve); margin-top:2px;">{{ $fb->created_at->format('d M Y') }}</p>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- CTA --}}
 <section class="cta">
     <div class="cta-inner">
