@@ -133,7 +133,27 @@ class CartController extends Controller
 
         session()->forget('cart');
 
-        return redirect()->route('shop.orders')
-            ->with('success', 'Order placed! We will confirm it shortly.');
+        return redirect()->route('shop.payment', $order)
+            ->with('success', 'Order placed! Complete your payment below.');
+    }
+    public function payment(Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+        return view('shop.payment', compact('order'));
+    }
+
+    public function processPayment(Request $request, Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+
+        $request->validate([
+            'payment_method' => ['required', 'in:upi,card,netbanking'],
+        ]);
+
+        // Mock: just mark order confirmed
+        $order->update(['status' => 'confirmed']);
+
+        return redirect()->route('shop.orders.show', $order)
+            ->with('success', 'Payment successful! Your order has been confirmed.');
     }
 }

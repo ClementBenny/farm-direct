@@ -68,6 +68,8 @@ Route::middleware(['auth', 'role:customer', 'no.back'])->prefix('shop')->name('s
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [CartController::class, 'placeOrder'])->name('checkout.store');
+    Route::get('/payment/{order}',  [CartController::class, 'payment'])->name('payment');
+    Route::post('/payment/{order}', [CartController::class, 'processPayment'])->name('payment.process');
 
     // Profile
     Route::prefix('profile')->name('profile.')->controller(\App\Http\Controllers\Customer\ProfileController::class)->group(function () {
