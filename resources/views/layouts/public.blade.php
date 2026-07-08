@@ -135,6 +135,14 @@
         }
         .btn-ghost:hover { color: var(--umber); border-color: var(--umber); }
 
+        .btn-ghost2 {
+            display: inline-block; font-size: 15px; letter-spacing: 0.08em;
+            color: var(--olive); text-decoration: none;
+            border-bottom: 1px solid rgba(196,164,132,0.4); padding-bottom: 2px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .btn-ghost2:hover { color: var(--umber); border-color: var(--umber); }
+
         /* ── GLOBAL TYPOGRAPHY ── */
         .section-label {
             font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
@@ -418,7 +426,7 @@
             background: rgba(196,164,132,0.3); border-radius: 4px 40px 4px 40px;
             height: 420px; overflow: hidden; display: flex;
             align-items: center; justify-content: center;
-            border: 1px solid rgba(196,164,132,0.3);
+            
         }
         .about-image-inner { text-align: center; }
         .placeholder-text { font-size: 12px; color: var(--mauve); margin-top: 12px; letter-spacing: 0.05em; }

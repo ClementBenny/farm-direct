@@ -54,7 +54,7 @@
                     <path d="M32 16c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8z" fill="#808000" opacity="0.3"/>
                     <path d="M20 44c0-6.6 5.4-12 12-12s12 5.4 12 12" stroke="#808000" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
                 </svg>
-                <p class="placeholder-text">Your farm photo here</p>
+                <img src="{{ asset('storage/images/farm.jpg') }}" alt="Farm Direct Delivery Truck">
             </div>
         </div>
         <div class="about-badge">
@@ -88,7 +88,7 @@
     </div>
 </section>
 
-{{-- PRODUCE GRID --}}
+{{-- PRODUCE GRID 
 <section class="produce">
     <div class="produce-header">
         <div class="section-label">What we grow</div>
@@ -122,6 +122,7 @@
         </div>
     </div>
 </section>
+--}}
 
 {{-- HOW IT WORKS --}}
 <section class="how">
@@ -150,12 +151,12 @@
 {{-- FEEDBACK STRIP --}}
 @php $landingFeedbacks = \App\Models\Feedback::with('user')->latest()->take(3)->get(); @endphp
 @if($landingFeedbacks->isNotEmpty())
-<section style="padding:100px 48px; background:var(--champagne);">
+<section style="padding:100px 48px; background:var(--mauve);">
     <div style="max-width:900px; margin:0 auto;">
         <div class="section-label">What our customers say</div>
         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:48px; flex-wrap:wrap; gap:16px;">
             <h2 class="section-title" style="margin-bottom:0;">Real stories, <em>real reviews</em></h2>
-            <a href="{{ route('feedback') }}" class="btn-ghost">All reviews &rarr;</a>
+            <a href="{{ route('feedback') }}" class="btn-ghost2">All reviews &rarr;</a>
         </div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
             @foreach($landingFeedbacks as $fb)
