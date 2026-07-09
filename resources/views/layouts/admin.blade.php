@@ -242,6 +242,20 @@
             <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                 <i class="ti ti-users"></i> Users
             </a>
+
+            <span class="nav-section">Reports</span>
+            <a href="{{ route('admin.reports.categories') }}" class="{{ request()->routeIs('admin.reports.categories') ? 'active' : '' }}">
+                <i class="ti ti-tags"></i> Categories
+            </a>
+            <a href="{{ route('admin.reports.products') }}" class="{{ request()->routeIs('admin.reports.products') ? 'active' : '' }}">
+                <i class="ti ti-plant-2"></i> Products
+            </a>
+            <a href="{{ route('admin.reports.orders') }}" class="{{ request()->routeIs('admin.reports.orders') ? 'active' : '' }}">
+                <i class="ti ti-shopping-cart"></i> Orders
+            </a>
+            <a href="{{ route('admin.reports.users') }}" class="{{ request()->routeIs('admin.reports.users') ? 'active' : '' }}">
+                <i class="ti ti-users"></i> Users
+            </a>
         </nav>
 
         <div class="sidebar-footer">

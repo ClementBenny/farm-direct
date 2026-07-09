@@ -424,7 +424,7 @@
         .about-image-wrap { position: relative; }
         .about-image-placeholder {
             background: rgba(196,164,132,0.3); border-radius: 4px 40px 4px 40px;
-            height: 420px; overflow: hidden; display: flex;
+            height: 330px; overflow: hidden; display: flex;
             align-items: center; justify-content: center;
             
         }

@@ -52,6 +52,12 @@ require __DIR__.'/auth.php';
 // Admin routes — only admin role can access
 Route::middleware(['auth', 'role:admin', 'no.back'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('reports')->name('reports.')->controller(\App\Http\Controllers\Admin\ReportController::class)->group(function () {
+        Route::get('/categories', 'categories')->name('categories');
+        Route::get('/products', 'products')->name('products');
+        Route::get('/orders', 'orders')->name('orders');
+        Route::get('/users', 'users')->name('users');
+    });
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);

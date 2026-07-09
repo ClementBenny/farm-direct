@@ -49,11 +49,6 @@
     <div class="about-image-wrap">
         <div class="about-image-placeholder">
             <div class="about-image-inner">
-                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                    <path d="M32 8C18.7 8 8 18.7 8 32s10.7 24 24 24 24-10.7 24-24S45.3 8 32 8z" fill="#808000" opacity="0.15"/>
-                    <path d="M32 16c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8z" fill="#808000" opacity="0.3"/>
-                    <path d="M20 44c0-6.6 5.4-12 12-12s12 5.4 12 12" stroke="#808000" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
-                </svg>
                 <img src="{{ asset('storage/images/farm.jpg') }}" alt="Farm Direct Delivery Truck">
             </div>
         </div>
