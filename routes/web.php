@@ -47,6 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('guest')->prefix('farm')->name('farm.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Auth\FarmAuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Auth\FarmAuthenticatedSessionController::class, 'store'])->name('login.store');
+});
+
 require __DIR__.'/auth.php';
 
 // Admin routes — only admin role can access

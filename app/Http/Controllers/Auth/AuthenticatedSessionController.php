@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -26,19 +27,26 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (in_array(auth()->user()->role, ['admin', 'staff'])) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Farm accounts must sign in at /farm/login.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
         $destination = match(auth()->user()->role) {
-            'admin'    => route('admin.dashboard'),
             'shop'     => route('wholesale.index'),
-            'staff'    => route('staff.dashboard'),
             'customer' => route('shop.index'),
             default    => route('shop.index'),
         };
 
         return redirect()->intended($destination);
     }
-
     /**
      * Destroy an authenticated session.
      */
